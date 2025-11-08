@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQHub - Offline</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a0000 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: #ef4444;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #9ca3af;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #ef4444;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #dc2626;
+        }
+        .offline-tips {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #ef4444;
+            border-radius: 1rem;
+            text-align: left;
+        }
+        .offline-tips h2 {
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+        .offline-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+        .offline-tips li {
+            padding: 0.5rem 0;
+            color: #d1d5db;
+        }
+        .offline-tips li:before {
+            content: "🔹 ";
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🌍</div>
+        <h1>ResQHub</h1>
+        <p>You're currently offline. Some features may not be available, but you can still access cached earthquake data and safety information.</p>
+        <a href="/" class="btn" onclick="window.location.reload(); return false;">Try Again</a>
+
+        <div class="offline-tips">
+            <h2>Earthquake Safety Tips (Offline)</h2>
+            <ul>
+                <li><strong>DROP</strong> - Get down on your hands and knees</li>
+                <li><strong>COVER</strong> - Take cover under a sturdy desk or table</li>
+                <li><strong>HOLD ON</strong> - Hold on until shaking stops</li>
+                <li>Stay away from windows and heavy objects</li>
+                <li>Be prepared for aftershocks</li>
+                <li>Have an emergency kit ready with water, food, and supplies</li>
+                <li>Know your evacuation routes</li>
+            </ul>
+
+            <h2 style="margin-top: 2rem;">Emergency Contacts</h2>
+            <ul>
+                <li><strong>NDRRMC:</strong> 911</li>
+                <li><strong>PHIVOLCS:</strong> (02) 8426-1468 to 79</li>
+                <li><strong>Red Cross:</strong> 143</li>
+                <li><strong>Emergency:</strong> 911</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
