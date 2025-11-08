@@ -16,7 +16,7 @@ interface Preferences {
   sound_alerts: boolean;
 }
 
-export default function SettingsModal({ onClose }: { onClose: () => void }) {
+export default function SettingsModal({ onClose, onSave }: { onClose: () => void; onSave?: () => void }) {
   const [preferences, setPreferences] = useState<Preferences>({
     latitude: 14.5995,
     longitude: 120.9842,
@@ -61,7 +61,16 @@ export default function SettingsModal({ onClose }: { onClose: () => void }) {
 
       const data = await response.json();
       setMessage('Settings saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
+
+      // Call onSave callback to refresh user location on parent component
+      if (onSave) {
+        onSave();
+      }
+
+      // Close modal after a short delay to show success message
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
       console.error('Error saving preferences:', error);
       setMessage('Error saving settings. Please try again.');

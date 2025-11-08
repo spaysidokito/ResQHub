@@ -74,6 +74,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('disasters/simulate-alert', [DisasterManagementController::class, 'simulateAlert'])->name('disasters.simulate-alert');
     Route::post('disasters/stop-test-alerts', [DisasterManagementController::class, 'stopTestAlerts'])->name('disasters.stop-test-alerts');
     Route::get('disasters/stats', [DisasterManagementController::class, 'stats'])->name('disasters.stats');
+    Route::get('disasters/dashboard-stats', [DisasterManagementController::class, 'getStats'])->name('disasters.dashboard-stats');
     Route::get('disasters/list', [DisasterManagementController::class, 'disasters'])->name('disasters.list');
     Route::post('disasters', [DisasterManagementController::class, 'store'])->name('disasters.store');
     Route::put('disasters/{disaster}', [DisasterManagementController::class, 'update'])->name('disasters.update');

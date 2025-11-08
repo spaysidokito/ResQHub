@@ -20,7 +20,7 @@ class DisasterManagementController extends Controller
             'active_disasters' => Disaster::where('status', 'active')->count(),
             'total_earthquakes' => Earthquake::count(),
             'total_alerts' => Alert::count(),
-            'unverified_disasters' => Disaster::where('is_verified', false)->count(),
+            'unverified_disasters' => \App\Models\CitizenReport::where('status', 'pending')->count(),
         ];
 
         $recentDisasters = Disaster::orderBy('created_at', 'desc')
@@ -33,6 +33,31 @@ class DisasterManagementController extends Controller
 
         // Return simple view for now
         return view('admin.disasters', [
+            'stats' => $stats,
+            'recentDisasters' => $recentDisasters,
+            'disastersByType' => $disastersByType,
+        ]);
+    }
+
+    public function getStats()
+    {
+        $stats = [
+            'total_disasters' => Disaster::count(),
+            'active_disasters' => Disaster::where('status', 'active')->count(),
+            'total_earthquakes' => Earthquake::count(),
+            'total_alerts' => Alert::count(),
+            'unverified_disasters' => \App\Models\CitizenReport::where('status', 'pending')->count(),
+        ];
+
+        $recentDisasters = Disaster::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        $disastersByType = Disaster::selectRaw('type, count(*) as count')
+            ->groupBy('type')
+            ->get();
+
+        return response()->json([
             'stats' => $stats,
             'recentDisasters' => $recentDisasters,
             'disastersByType' => $disastersByType,

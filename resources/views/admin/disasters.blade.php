@@ -52,6 +52,32 @@
             font-size: 0.75rem;
             color: #9ca3af;
         }
+        .refresh-btn {
+            padding: 0.5rem 1rem;
+            background: #1f2937;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .refresh-btn:hover {
+            background: #374151;
+        }
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .rotate {
+            animation: rotate 1s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
         .btn {
             padding: 0.5rem 1rem;
             background: #1f2937;
@@ -220,10 +246,16 @@
                 </div>
                 <div>
                     <h1>Admin Dashboard</h1>
-                    <div class="subtitle">Disaster Management System</div>
+                    <div class="subtitle">Disaster Management System • <span id="lastUpdate">Just now</span></div>
                 </div>
             </div>
-            <a href="/dashboard" class="btn">← Back to Dashboard</a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button id="refreshBtn" class="refresh-btn" onclick="refreshData()">
+                    <span class="material-icons" id="refreshIcon" style="font-size: 18px;">refresh</span>
+                    <span id="refreshText">Refresh</span>
+                </button>
+                <a href="/dashboard" class="btn">← Back to Dashboard</a>
+            </div>
         </div>
     </header>
 
@@ -247,7 +279,7 @@
                 <div class="stat-value" style="color: #eab308;">{{ $stats['total_alerts'] }}</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Unverified</div>
+                <div class="stat-label">Pending Reports</div>
                 <div class="stat-value" style="color: #9ca3af;">{{ $stats['unverified_disasters'] }}</div>
             </div>
         </div>
@@ -331,7 +363,7 @@
                         <span class="material-icons" style="font-size: 18px;">list</span> View All Disasters
                     </a>
                     <a href="/admin/disasters/verify" class="action-btn action-btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <span class="material-icons" style="font-size: 18px;">verified</span> Verify Reports
+                        <span class="material-icons" style="font-size: 18px;">verified</span> Review Citizen Reports
                     </a>
                     <button onclick="if(confirm('This will create a simulated disaster for testing. Continue?')) { window.location.href='/admin/disasters/simulate'; }" class="action-btn" style="border: none; cursor: pointer; background: #7c3aed; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                         <span class="material-icons" style="font-size: 18px;">science</span> Simulate Disaster
@@ -451,6 +483,87 @@
                 alert('❌ Error stopping test alerts');
             }
         }
+
+        // Auto-refresh functionality
+        let refreshInterval;
+        let lastUpdateTime = new Date();
+
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const diff = Math.floor((now - lastUpdateTime) / 1000);
+            const updateEl = document.getElementById('lastUpdate');
+
+            if (diff < 60) {
+                updateEl.textContent = diff === 0 ? 'Just now' : `${diff}s ago`;
+            } else if (diff < 3600) {
+                updateEl.textContent = `${Math.floor(diff / 60)}m ago`;
+            } else {
+                updateEl.textContent = lastUpdateTime.toLocaleTimeString();
+            }
+        }
+
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            const refreshIcon = document.getElementById('refreshIcon');
+            const refreshText = document.getElementById('refreshText');
+
+            refreshBtn.disabled = true;
+            refreshIcon.classList.add('rotate');
+            refreshText.textContent = 'Refreshing...';
+
+            try {
+                const response = await fetch('/admin/disasters/dashboard-stats', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Update stats
+                    document.querySelectorAll('.stat-value').forEach((el, index) => {
+                        const values = [
+                            data.stats.total_disasters,
+                            data.stats.active_disasters,
+                            data.stats.total_earthquakes,
+                            data.stats.total_alerts,
+                            data.stats.unverified_disasters
+                        ];
+                        if (el.textContent !== values[index].toString()) {
+                            el.style.animation = 'pulse 0.5s';
+                            setTimeout(() => el.style.animation = '', 500);
+                        }
+                        el.textContent = values[index];
+                    });
+
+                    lastUpdateTime = new Date();
+                    updateLastUpdateTime();
+
+                    // Reload page if there are significant changes
+                    const currentTotal = parseInt(document.querySelector('.stat-value').textContent);
+                    if (Math.abs(currentTotal - data.stats.total_disasters) > 0) {
+                        setTimeout(() => location.reload(), 1000);
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            } finally {
+                refreshBtn.disabled = false;
+                refreshIcon.classList.remove('rotate');
+                refreshText.textContent = 'Refresh';
+            }
+        }
+
+        // Auto-refresh every 10 seconds
+        refreshInterval = setInterval(refreshData, 10000);
+
+        // Update "last updated" time every second
+        setInterval(updateLastUpdateTime, 1000);
+
+        // Initial update
+        updateLastUpdateTime();
     </script>
 </body>
 </html>

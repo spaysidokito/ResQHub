@@ -1,9 +1,11 @@
 import { Head } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import WarningIcon from '@mui/icons-material/Warning';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PublicIcon from '@mui/icons-material/Public';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface Stats {
   total_disasters: number;
@@ -30,14 +32,65 @@ interface DisasterByType {
 }
 
 export default function DisasterManagement({
-  stats,
-  recentDisasters,
-  disastersByType,
+  stats: initialStats,
+  recentDisasters: initialDisasters,
+  disastersByType: initialDisastersByType,
 }: {
   stats: Stats;
   recentDisasters: Disaster[];
   disastersByType: DisasterByType[];
 }) {
+  const [stats, setStats] = useState<Stats>(initialStats);
+  const [recentDisasters, setRecentDisasters] = useState<Disaster[]>(initialDisasters);
+  const [disastersByType, setDisastersByType] = useState<DisasterByType[]>(initialDisastersByType);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [hasNewData, setHasNewData] = useState(false);
+
+  // Auto-refresh every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLatestData();
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchLatestData = async () => {
+    try {
+      setIsRefreshing(true);
+      const response = await fetch('/admin/disasters/dashboard-stats', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Check if there's new data
+        const hasChanges =
+          JSON.stringify(data.stats) !== JSON.stringify(stats) ||
+          JSON.stringify(data.recentDisasters) !== JSON.stringify(recentDisasters);
+
+        if (hasChanges) {
+          setHasNewData(true);
+          setTimeout(() => setHasNewData(false), 2000); // Remove highlight after 2 seconds
+        }
+
+        setStats(data.stats);
+        setRecentDisasters(data.recentDisasters);
+        setDisastersByType(data.disastersByType);
+        setLastUpdate(new Date());
+      }
+    } catch (error) {
+      console.error('Error fetching latest data:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'flood': return '🌊';
@@ -72,23 +125,36 @@ export default function DisasterManagement({
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-red-500">Admin Dashboard</h1>
-                <p className="text-xs text-gray-400">Disaster Management System</p>
+                <p className="text-xs text-gray-400">
+                  Disaster Management System • Last updated: {lastUpdate.toLocaleTimeString()}
+                </p>
               </div>
             </div>
 
-            <a
-              href="/dashboard"
-              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm"
-            >
-              ← Back to Dashboard
-            </a>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchLatestData}
+                disabled={isRefreshing}
+                className="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm flex items-center gap-2 disabled:opacity-50"
+                title="Refresh data"
+              >
+                <RefreshIcon className={isRefreshing ? 'animate-spin' : ''} sx={{ fontSize: 18 }} />
+                {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              </button>
+              <a
+                href="/dashboard"
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm"
+              >
+                ← Back to Dashboard
+              </a>
+            </div>
           </div>
         </header>
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 transition-all duration-300 ${hasNewData ? 'scale-[1.01]' : ''}`}>
             <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -132,7 +198,7 @@ export default function DisasterManagement({
             <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Unverified</p>
+                  <p className="text-gray-400 text-sm">Pending Reports</p>
                   <p className="text-3xl font-bold text-gray-300">{stats.unverified_disasters}</p>
                 </div>
                 <CheckCircleIcon sx={{ fontSize: 40, color: '#9ca3af' }} />
@@ -214,10 +280,10 @@ export default function DisasterManagement({
                     📋 View All Disasters
                   </a>
                   <a
-                    href="/admin/disasters?filter=unverified"
+                    href="/admin/disasters/verify"
                     className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm flex items-center justify-center gap-2"
                   >
-                    ✅ Verify Reports
+                    ✅ Review Citizen Reports
                   </a>
                   <button
                     onClick={() => {

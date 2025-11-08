@@ -33,15 +33,26 @@ interface Disaster {
   location: string;
 }
 
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+  location_name: string;
+  radius_km: number;
+}
+
 export default function RealMap({
   earthquakes,
-  disasters = []
+  disasters = [],
+  userLocation
 }: {
   earthquakes: Earthquake[];
   disasters?: Disaster[];
+  userLocation?: UserLocation;
 }) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const radiusCircleRef = useRef<L.Circle | null>(null);
+  const userMarkerRef = useRef<L.Marker | null>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -70,9 +81,11 @@ export default function RealMap({
 
     const map = mapRef.current;
 
-    // Clear existing markers
+    // Clear existing disaster/earthquake markers (but keep user location marker and radius)
     map.eachLayer((layer) => {
-      if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+      if ((layer instanceof L.Marker || layer instanceof L.CircleMarker) &&
+          layer !== userMarkerRef.current &&
+          layer !== radiusCircleRef.current) {
         map.removeLayer(layer);
       }
     });
@@ -144,6 +157,87 @@ export default function RealMap({
     });
   }, [earthquakes, disasters]);
 
+  // Add user location and radius circle
+  useEffect(() => {
+    console.log('RealMap userLocation effect triggered:', userLocation);
+    if (!mapRef.current || !userLocation) {
+      console.log('Skipping user location render:', { hasMap: !!mapRef.current, hasLocation: !!userLocation });
+      return;
+    }
+
+    const map = mapRef.current;
+    console.log('Drawing user location and radius circle');
+
+    // Remove existing user marker and radius circle
+    if (radiusCircleRef.current) {
+      map.removeLayer(radiusCircleRef.current);
+    }
+    if (userMarkerRef.current) {
+      map.removeLayer(userMarkerRef.current);
+    }
+
+    // Add radius circle
+    console.log('Creating circle at:', userLocation.latitude, userLocation.longitude, 'with radius:', userLocation.radius_km * 1000, 'meters');
+    const circle = L.circle([userLocation.latitude, userLocation.longitude], {
+      radius: userLocation.radius_km * 1000, // Convert km to meters
+      color: '#3b82f6',
+      fillColor: '#3b82f6',
+      fillOpacity: 0.1,
+      weight: 2,
+      dashArray: '5, 10',
+    }).addTo(map);
+
+    console.log('Circle created and added to map');
+    radiusCircleRef.current = circle;
+
+    // Add user location marker
+    const userIcon = L.divIcon({
+      className: 'custom-user-marker',
+      html: `<div style="
+        background: #3b82f6;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      ">
+        <div style="
+          width: 8px;
+          height: 8px;
+          background: white;
+          border-radius: 50%;
+        "></div>
+      </div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+    });
+
+    console.log('Creating user marker at:', userLocation.latitude, userLocation.longitude);
+    const marker = L.marker([userLocation.latitude, userLocation.longitude], {
+      icon: userIcon,
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="min-width: 200px;">
+        <strong style="color: #3b82f6; font-size: 16px;">📍 Your Location</strong><br/>
+        <strong>${userLocation.location_name}</strong><br/>
+        <span>Alert Radius: ${userLocation.radius_km} km</span>
+      </div>
+    `);
+
+    console.log('User marker created and added to map');
+    userMarkerRef.current = marker;
+
+    // Center map on user location
+    console.log('Centering map on user location');
+    map.setView([userLocation.latitude, userLocation.longitude], 8);
+    console.log('Map centered');
+
+  }, [userLocation]);
+
   return (
     <div className="relative">
       <div
@@ -152,8 +246,21 @@ export default function RealMap({
         style={{ minHeight: '400px' }}
       />
 
+      {/* Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-2 p-2 bg-gray-800 rounded text-xs">
+          <strong>Debug:</strong> userLocation = {userLocation ? JSON.stringify(userLocation) : 'null'}
+        </div>
+      )}
+
       {/* Legend */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs">
+        {userLocation && (
+          <div className="flex items-center gap-2 px-3 py-1 bg-blue-900/30 border border-blue-600 rounded">
+            <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white" />
+            <span>Your Location ({userLocation.radius_km} km radius)</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-green-500" />
           <span>M &lt; 4</span>

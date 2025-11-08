@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RealMap from '@/components/RealMap';
@@ -70,11 +70,14 @@ export default function Dashboard({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mapView, setMapView] = useState<'disasters' | 'weather'>('disasters');
   const [showOfflineTips, setShowOfflineTips] = useState(false);
+  const [userLocation, setUserLocation] = useState<any>(null);
+  const alertPanelRef = useRef<HTMLDivElement>(null);
   const { auth } = usePage().props as any;
   const { isOnline, saveOfflineData, loadOfflineData } = useOffline();
 
   useEffect(() => {
     fetchUnreadAlerts();
+    fetchUserLocation();
     const interval = setInterval(() => {
       refreshData();
       fetchUnreadAlerts();
@@ -82,6 +85,44 @@ export default function Dashboard({
 
     return () => clearInterval(interval);
   }, []);
+
+  const fetchUserLocation = async () => {
+    try {
+      const response = await fetch('/api/preferences');
+      if (response.ok) {
+        const data = await response.json();
+        const location = {
+          latitude: data.latitude || 14.5995,
+          longitude: data.longitude || 120.9842,
+          location_name: data.location_name || 'Manila, Philippines',
+          radius_km: data.radius_km || 100,
+        };
+        console.log('User location loaded:', location);
+        setUserLocation(location);
+      } else {
+        // Set default location if API fails
+        const defaultLocation = {
+          latitude: 14.5995,
+          longitude: 120.9842,
+          location_name: 'Manila, Philippines',
+          radius_km: 100,
+        };
+        console.log('Using default location:', defaultLocation);
+        setUserLocation(defaultLocation);
+      }
+    } catch (error) {
+      console.error('Error fetching user location:', error);
+      // Set default location
+      const defaultLocation = {
+        latitude: 14.5995,
+        longitude: 120.9842,
+        location_name: 'Manila, Philippines',
+        radius_km: 100,
+      };
+      console.log('Using default location after error:', defaultLocation);
+      setUserLocation(defaultLocation);
+    }
+  };
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -222,7 +263,12 @@ export default function Dashboard({
               </button>
 
               <div className="relative">
-                <button className="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    alertPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition text-sm flex items-center gap-1"
+                >
                   <NotificationsIcon sx={{ fontSize: 18 }} />
                   <span className="hidden sm:inline">Alerts</span>
                 </button>
@@ -349,7 +395,7 @@ export default function Dashboard({
                   </div>
                 </div>
                 {mapView === 'disasters' ? (
-                  <RealMap earthquakes={earthquakes} disasters={disasters} />
+                  <RealMap earthquakes={earthquakes} disasters={disasters} userLocation={userLocation} />
                 ) : (
                   <WindyMap />
                 )}
@@ -383,7 +429,9 @@ export default function Dashboard({
               animate={{ opacity: 1, x: 0 }}
      transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <AlertPanel onUnreadChange={setUnreadAlerts} />
+              <div ref={alertPanelRef}>
+                <AlertPanel onUnreadChange={setUnreadAlerts} />
+              </div>
 
               <FloodMonitoring />
 
@@ -436,7 +484,13 @@ export default function Dashboard({
         {/* Settings Modal */}
         <AnimatePresence>
           {showSettings && (
-            <SettingsModal onClose={() => setShowSettings(false)} />
+            <SettingsModal
+              onClose={() => setShowSettings(false)}
+              onSave={() => {
+                console.log('Settings saved, refreshing user location...');
+                fetchUserLocation();
+              }}
+            />
           )}
         </AnimatePresence>
 
