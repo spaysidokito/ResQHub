@@ -108,13 +108,13 @@
         }
         .disaster-item {
             background: #1f2937;
-            border: 1px solid #374151;
+            border: 2px solid #ef4444;
             border-radius: 0.5rem;
             padding: 1rem;
             margin-bottom: 0.75rem;
         }
         .disaster-item:hover {
-            border-color: #ef4444;
+            border-color: #dc2626;
         }
         .disaster-header {
             display: flex;
@@ -133,17 +133,17 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .badge-critical { background: rgba(220, 38, 38, 0.2); color: #dc2626; border: 1px solid #dc2626; }
-        .badge-high { background: rgba(249, 115, 22, 0.2); color: #f97316; border: 1px solid #f97316; }
-        .badge-moderate { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
-        .badge-low { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .badge-critical { background: rgba(220, 38, 38, 0.2); color: #dc2626; border: 2px solid #dc2626; }
+        .badge-high { background: rgba(249, 115, 22, 0.2); color: #f97316; border: 2px solid #ef4444; }
+        .badge-moderate { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 2px solid #ef4444; }
+        .badge-low { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 2px solid #ef4444; }
         .disaster-meta {
             font-size: 0.875rem;
             color: #9ca3af;
         }
         .type-item {
             background: #1f2937;
-            border: 1px solid #374151;
+            border: 2px solid #ef4444;
             border-radius: 0.5rem;
             padding: 1rem;
             margin-bottom: 0.75rem;
@@ -159,7 +159,7 @@
         .actions {
             margin-top: 1.5rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #374151;
+            border-top: 2px solid #ef4444;
         }
         .action-btn {
             display: block;
@@ -234,21 +234,21 @@
                 <div class="stat-label">Total Disasters</div>
                 <div class="stat-value" style="color: #ef4444;">{{ $stats['total_disasters'] }}</div>
             </div>
-            <div class="stat-card" style="border-color: #f97316;">
+            <div class="stat-card">
                 <div class="stat-label">Active</div>
                 <div class="stat-value" style="color: #f97316;">{{ $stats['active_disasters'] }}</div>
             </div>
-            <div class="stat-card" style="border-color: #3b82f6;">
+            <div class="stat-card">
                 <div class="stat-label">Earthquakes</div>
-                <div class="stat-value" style="color: #3b82f6;">{{ $stats['total_earthquakes'] }}</div>
+                <div class="stat-value" style="color: #fca5a5;">{{ $stats['total_earthquakes'] }}</div>
             </div>
-            <div class="stat-card" style="border-color: #eab308;">
+            <div class="stat-card">
                 <div class="stat-label">Total Alerts</div>
                 <div class="stat-value" style="color: #eab308;">{{ $stats['total_alerts'] }}</div>
             </div>
-            <div class="stat-card" style="border-color: #a855f7;">
+            <div class="stat-card">
                 <div class="stat-label">Unverified</div>
-                <div class="stat-value" style="color: #a855f7;">{{ $stats['unverified_disasters'] }}</div>
+                <div class="stat-value" style="color: #9ca3af;">{{ $stats['unverified_disasters'] }}</div>
             </div>
         </div>
 
@@ -272,7 +272,7 @@
                                     @endif
                                     {{ $disaster->name }}
                                     @if(!$disaster->is_verified)
-                                        <span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308;">Unverified</span>
+                                        <span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 2px solid #ef4444;">Unverified</span>
                                     @endif
                                 </div>
                                 <div class="disaster-meta">

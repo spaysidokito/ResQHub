@@ -89,16 +89,16 @@ export default function AdminAccounts() {
     return (
         <AdminSidebarLayout>
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-bold text-white">Accounts</h1>
-                <Button variant="default" className="bg-black text-white border border-neutral-800 hover:bg-neutral-900" onClick={() => setOpen(true)}>
+                <h1 className="text-2xl font-bold text-red-500">Accounts</h1>
+                <Button variant="default" className="bg-black text-white border-2 border-red-600 hover:bg-red-950" onClick={() => setOpen(true)}>
                     create account
                 </Button>
             </div>
             {flash.success && <div className="mb-4 text-green-400">{flash.success}</div>}
-            <Card className="p-6 rounded-xl border border-neutral-800 bg-black max-w-6xl mx-auto">
+            <Card className="p-6 rounded-xl border-2 border-red-600 bg-black max-w-6xl mx-auto">
                 <table className="w-full text-left border-collapse bg-black text-white">
                     <thead>
-                        <tr className="border-b border-neutral-800">
+                        <tr className="border-b-2 border-red-600">
                             <th className="py-2 px-4">ID</th>
                             <th className="py-2 px-4">Name</th>
                             <th className="py-2 px-4">Email</th>
@@ -110,7 +110,7 @@ export default function AdminAccounts() {
                     </thead>
                     <tbody>
                         {accounts.data.map((account) => (
-                            <tr key={account.id} className="border-b border-neutral-800 last:border-b-0 hover:bg-neutral-900">
+                            <tr key={account.id} className="border-b border-red-600 last:border-b-0 hover:bg-red-950">
                                 <td className="py-2 px-4">{account.id}</td>
                                 <td className="py-2 px-4">{account.name}</td>
                                 <td className="py-2 px-4">{account.email}</td>
@@ -143,7 +143,7 @@ export default function AdminAccounts() {
             </Card>
             {/* Create Account Modal */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="bg-black border border-neutral-800 text-white">
+                <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>
                         <DialogTitle>Create Account</DialogTitle>
                     </DialogHeader>
@@ -151,7 +151,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Name</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.name}
                                 onChange={e => form.setData('name', e.target.value)}
                                 required
@@ -161,7 +161,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Email</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.email}
                                 onChange={e => form.setData('email', e.target.value)}
                                 required
@@ -172,7 +172,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Password</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.password}
                                 onChange={e => form.setData('password', e.target.value)}
                                 required
@@ -183,7 +183,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Role</label>
                             <select
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.role}
                                 onChange={e => form.setData('role', e.target.value)}
                                 required
@@ -197,7 +197,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Title</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.title || ''}
                                 onChange={e => form.setData('title', e.target.value)}
                                 type="text"
@@ -207,7 +207,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Title Description</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={form.data.title_description || ''}
                                 onChange={e => form.setData('title_description', e.target.value)}
                                 type="text"
@@ -215,7 +215,7 @@ export default function AdminAccounts() {
                             {errors.title_description && <div className="text-red-400 text-xs mt-1">{errors.title_description}</div>}
                         </div>
                         <DialogFooter>
-                            <Button type="submit" variant="default" className="bg-black text-white border border-neutral-800 hover:bg-neutral-900" disabled={form.processing}>
+                            <Button type="submit" variant="default" className="bg-black text-white border-2 border-red-600 hover:bg-red-950" disabled={form.processing}>
                                 {form.processing ? 'Creating...' : 'Create'}
                             </Button>
                         </DialogFooter>
@@ -224,7 +224,7 @@ export default function AdminAccounts() {
             </Dialog>
             {/* Edit Account Modal */}
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="bg-black border border-neutral-800 text-white">
+                <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>
                         <DialogTitle>Edit Account</DialogTitle>
                     </DialogHeader>
@@ -232,7 +232,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Name</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={editForm.data.name}
                                 onChange={e => editForm.setData('name', e.target.value)}
                                 required
@@ -242,7 +242,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Email</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={editForm.data.email}
                                 onChange={e => editForm.setData('email', e.target.value)}
                                 required
@@ -253,7 +253,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Role</label>
                             <select
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={editForm.data.role}
                                 onChange={e => editForm.setData('role', e.target.value)}
                                 required
@@ -267,7 +267,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Title</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={editForm.data.title || ''}
                                 onChange={e => editForm.setData('title', e.target.value)}
                                 type="text"
@@ -277,7 +277,7 @@ export default function AdminAccounts() {
                         <div>
                             <label className="block mb-1">Title Description</label>
                             <input
-                                className="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 text-white"
+                                className="w-full px-3 py-2 rounded bg-neutral-900 border-2 border-red-600 text-white"
                                 value={editForm.data.title_description || ''}
                                 onChange={e => editForm.setData('title_description', e.target.value)}
                                 type="text"
@@ -285,7 +285,7 @@ export default function AdminAccounts() {
                             {errors.title_description && <div className="text-red-400 text-xs mt-1">{errors.title_description}</div>}
                         </div>
                         <DialogFooter>
-                            <Button type="submit" variant="default" className="bg-black text-white border border-neutral-800 hover:bg-neutral-900" disabled={editForm.processing}>
+                            <Button type="submit" variant="default" className="bg-black text-white border-2 border-red-600 hover:bg-red-950" disabled={editForm.processing}>
                                 {editForm.processing ? 'Saving...' : 'Save'}
                             </Button>
                         </DialogFooter>
@@ -294,7 +294,7 @@ export default function AdminAccounts() {
             </Dialog>
             {/* Delete Confirmation Dialog */}
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                <DialogContent className="bg-black border border-neutral-800 text-white">
+                <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>
                         <DialogTitle>Delete Account</DialogTitle>
                     </DialogHeader>

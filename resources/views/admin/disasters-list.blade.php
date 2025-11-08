@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Disasters - ResQHub Admin</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -262,10 +263,10 @@
         <div class="filters">
             <select id="typeFilter" onchange="filterDisasters()">
                 <option value="">All Types</option>
-                <option value="flood">🌊 Floods</option>
-                <option value="typhoon">🌀 Typhoons</option>
-                <option value="fire">🔥 Fires</option>
-                <option value="earthquake">🌍 Earthquakes</option>
+                <option value="flood">Floods</option>
+                <option value="typhoon">Typhoons</option>
+                <option value="fire">Fires</option>
+                <option value="earthquake">Earthquakes</option>
             </select>
             <select id="statusFilter" onchange="filterDisasters()">
                 <option value="">All Status</option>
@@ -328,7 +329,7 @@
                                 ${!disaster.is_verified ? '<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308;">Unverified</span>' : ''}
                             </div>
                             <div class="disaster-meta">
-                                📍 ${disaster.location} • ${new Date(disaster.created_at).toLocaleDateString()}
+                                <span class="material-icons" style="font-size: 14px; vertical-align: middle;">location_on</span> ${disaster.location} • ${new Date(disaster.created_at).toLocaleDateString()}
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
@@ -356,9 +357,9 @@
                         </div>
                     </div>
                     <div class="actions">
-                        <button onclick="editDisaster(${disaster.id})" class="action-btn action-btn-edit">✏️ Edit</button>
-                        ${disaster.status !== 'resolved' ? `<button onclick="resolveDisaster(${disaster.id})" class="action-btn action-btn-resolve">✅ Mark Resolved</button>` : ''}
-                        <button onclick="deleteDisaster(${disaster.id})" class="action-btn action-btn-delete">🗑️ Delete</button>
+                        <button onclick="editDisaster(${disaster.id})" class="action-btn action-btn-edit" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">edit</span> Edit</button>
+                        ${disaster.status !== 'resolved' ? `<button onclick="resolveDisaster(${disaster.id})" class="action-btn action-btn-resolve" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">check_circle</span> Mark Resolved</button>` : ''}
+                        <button onclick="deleteDisaster(${disaster.id})" class="action-btn action-btn-delete" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">delete</span> Delete</button>
                     </div>
                 </div>
             `).join('');
@@ -366,12 +367,12 @@
 
         function getTypeIcon(type) {
             const icons = {
-                flood: '🌊',
-                typhoon: '🌀',
-                fire: '🔥',
-                earthquake: '🌍'
+                flood: '<span class="material-icons" style="font-size: 20px; vertical-align: middle; color: #3b82f6;">water</span>',
+                typhoon: '<span class="material-icons" style="font-size: 20px; vertical-align: middle; color: #6366f1;">cyclone</span>',
+                fire: '<span class="material-icons" style="font-size: 20px; vertical-align: middle; color: #f97316;">local_fire_department</span>',
+                earthquake: '<span class="material-icons" style="font-size: 20px; vertical-align: middle; color: #eab308;">public</span>'
             };
-            return icons[type] || '⚠️';
+            return icons[type] || '<span class="material-icons" style="font-size: 20px; vertical-align: middle; color: #ef4444;">warning</span>';
         }
 
         function filterDisasters() {
@@ -504,7 +505,7 @@
 
                 if (response.ok) {
                     loadDisasters();
-                    alert('🗑️ Disaster deleted successfully!');
+                    alert('✅ Disaster deleted successfully!');
                 } else {
                     const error = await response.json();
                     console.error('Delete error:', error);
@@ -525,7 +526,7 @@
     <!-- Edit Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">✏️ Edit Disaster</div>
+            <div class="modal-header" style="display: flex; align-items: center; gap: 0.5rem;"><span class="material-icons" style="font-size: 28px;">edit</span> Edit Disaster</div>
 
             <div class="form-group">
                 <label>Disaster Name</label>
@@ -575,7 +576,7 @@
 
             <div class="modal-actions">
                 <button onclick="closeModal()" style="background: #374151; color: white;">Cancel</button>
-                <button onclick="saveEdit()" style="background: #3b82f6; color: white;">💾 Save Changes</button>
+                <button onclick="saveEdit()" style="background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"><span class="material-icons" style="font-size: 18px;">save</span> Save Changes</button>
             </div>
         </div>
     </div>

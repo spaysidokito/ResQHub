@@ -7,6 +7,7 @@ use App\Models\Disaster;
 use App\Models\Earthquake;
 use App\Models\Alert;
 use App\Models\User;
+use App\Models\UserPreference;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -317,20 +318,59 @@ class DisasterManagementController extends Controller
     }
 
     /**
-     * Create alerts for all users when a disaster is created
+     * Create alerts for users within their specified radius when a disaster is created
      */
     private function createAlertsForDisaster(Disaster $disaster)
     {
         $users = User::all();
 
         foreach ($users as $user) {
-            Alert::create([
-                'disaster_id' => $disaster->id,
-                'user_id' => $user->id,
-                'severity' => $disaster->severity,
-                'is_read' => false,
-                'sent_at' => now(),
-            ]);
+            // Get user preferences
+            $preference = UserPreference::where('user_id', $user->id)->first();
+
+            // If no preference, use defaults (100km radius, Manila location)
+            $userLat = $preference->latitude ?? 14.5995;
+            $userLon = $preference->longitude ?? 120.9842;
+            $radiusKm = $preference->radius_km ?? 100;
+
+            // Calculate distance between user location and disaster location
+            $distance = $this->calculateDistance(
+                $userLat,
+                $userLon,
+                $disaster->latitude,
+                $disaster->longitude
+            );
+
+            // Only create alert if disaster is within user's radius
+            if ($distance <= $radiusKm) {
+                Alert::create([
+                    'disaster_id' => $disaster->id,
+                    'user_id' => $user->id,
+                    'severity' => $disaster->severity,
+                    'is_read' => false,
+                    'sent_at' => now(),
+                ]);
+            }
         }
+    }
+
+    /**
+     * Calculate distance between two coordinates using Haversine formula
+     * Returns distance in kilometers
+     */
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371; // Earth's radius in kilometers
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 }

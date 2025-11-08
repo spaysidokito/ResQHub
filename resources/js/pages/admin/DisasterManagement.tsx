@@ -51,10 +51,10 @@ export default function DisasterManagement({
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'text-red-600 bg-red-900/20 border-red-600';
-      case 'high': return 'text-orange-600 bg-orange-900/20 border-orange-600';
-      case 'moderate': return 'text-yellow-600 bg-yellow-900/20 border-yellow-600';
-      case 'low': return 'text-green-500 bg-green-900/20 border-green-600';
-      default: return 'text-gray-500 bg-gray-900/20 border-gray-600';
+      case 'high': return 'text-orange-600 bg-orange-900/20 border-red-600';
+      case 'moderate': return 'text-yellow-600 bg-yellow-900/20 border-red-600';
+      case 'low': return 'text-green-500 bg-green-900/20 border-red-600';
+      default: return 'text-gray-500 bg-gray-900/20 border-red-600';
     }
   };
 
@@ -99,27 +99,27 @@ export default function DisasterManagement({
               </div>
             </div>
 
-            <div className="bg-gray-900 border-2 border-orange-600 rounded-lg p-4">
+            <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Active</p>
-                  <p className="text-3xl font-bold text-orange-500">{stats.active_disasters}</p>
+                  <p className="text-3xl font-bold text-red-400">{stats.active_disasters}</p>
                 </div>
-                <AssessmentIcon sx={{ fontSize: 40, color: '#f97316' }} />
+                <AssessmentIcon sx={{ fontSize: 40, color: '#f87171' }} />
               </div>
             </div>
 
-            <div className="bg-gray-900 border-2 border-blue-600 rounded-lg p-4">
+            <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Earthquakes</p>
-                  <p className="text-3xl font-bold text-blue-500">{stats.total_earthquakes}</p>
+                  <p className="text-3xl font-bold text-red-300">{stats.total_earthquakes}</p>
                 </div>
-                <PublicIcon sx={{ fontSize: 40, color: '#3b82f6' }} />
+                <PublicIcon sx={{ fontSize: 40, color: '#fca5a5' }} />
               </div>
             </div>
 
-            <div className="bg-gray-900 border-2 border-yellow-600 rounded-lg p-4">
+            <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Total Alerts</p>
@@ -129,13 +129,13 @@ export default function DisasterManagement({
               </div>
             </div>
 
-            <div className="bg-gray-900 border-2 border-purple-600 rounded-lg p-4">
+            <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Unverified</p>
-                  <p className="text-3xl font-bold text-purple-500">{stats.unverified_disasters}</p>
+                  <p className="text-3xl font-bold text-gray-300">{stats.unverified_disasters}</p>
                 </div>
-                <CheckCircleIcon sx={{ fontSize: 40, color: '#a855f7' }} />
+                <CheckCircleIcon sx={{ fontSize: 40, color: '#9ca3af' }} />
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function DisasterManagement({
                   recentDisasters.map((disaster) => (
                     <div
                       key={disaster.id}
-                      className="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-red-600 transition"
+                      className="bg-gray-800 border border-red-600 rounded-lg p-4 hover:border-red-500 transition"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -159,7 +159,7 @@ export default function DisasterManagement({
                             <span className="text-2xl">{getTypeIcon(disaster.type)}</span>
                             <h3 className="font-semibold text-white">{disaster.name}</h3>
                             {!disaster.is_verified && (
-                              <span className="px-2 py-1 bg-yellow-900/30 text-yellow-500 text-xs rounded border border-yellow-600">
+                              <span className="px-2 py-1 bg-yellow-900/30 text-yellow-500 text-xs rounded border border-red-600">
                                 Unverified
                               </span>
                             )}
@@ -185,7 +185,7 @@ export default function DisasterManagement({
                 {disastersByType.map((item) => (
                   <div
                     key={item.type}
-                    className="bg-gray-800 border border-gray-700 rounded-lg p-4"
+                    className="bg-gray-800 border border-red-600 rounded-lg p-4"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export default function DisasterManagement({
                 ))}
               </div>
 
-              <div className="mt-6 pt-6 border-t border-gray-700">
+              <div className="mt-6 pt-6 border-t border-red-600">
                 <h3 className="text-lg font-bold text-white mb-3">Quick Actions</h3>
                 <div className="space-y-2">
                   <a
@@ -225,7 +225,7 @@ export default function DisasterManagement({
                         window.location.href = '/admin/disasters/simulate';
                       }
                     }}
-                    className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition text-sm flex items-center justify-center gap-2"
+                    className="w-full px-4 py-2 bg-red-700 hover:bg-red-800 rounded-lg transition text-sm flex items-center justify-center gap-2"
                   >
                     🎭 Simulate Disaster
                   </button>
@@ -235,8 +235,8 @@ export default function DisasterManagement({
           </div>
 
           {/* Info Box */}
-          <div className="mt-6 bg-blue-900/20 border-2 border-blue-600 rounded-lg p-6">
-            <h3 className="text-xl font-bold text-blue-500 mb-2">Admin Features</h3>
+          <div className="mt-6 bg-red-900/20 border-2 border-red-600 rounded-lg p-6">
+            <h3 className="text-xl font-bold text-red-500 mb-2">Admin Features</h3>
             <p className="text-gray-300 mb-4">
               As an administrator, you have full access to manage all disaster data, verify community reports,
               and oversee the entire monitoring system.

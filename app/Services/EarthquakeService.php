@@ -81,27 +81,58 @@ class EarthquakeService
 
     public function checkAndCreateAlerts(Earthquake $earthquake)
     {
-        $preferences = \App\Models\UserPreference::all();
+        $users = \App\Models\User::all();
 
-        foreach ($preferences as $pref) {
+        foreach ($users as $user) {
+            // Get user preferences or use defaults
+            $preference = \App\Models\UserPreference::where('user_id', $user->id)->first();
+
+            $userLat = $preference->latitude ?? 14.5995; // Default: Manila
+            $userLon = $preference->longitude ?? 120.9842;
+            $radiusKm = $preference->radius_km ?? 100; // Default: 100km
+            $minMagnitude = $preference->min_magnitude ?? 3.0; // Default: 3.0
+
+            // Calculate distance between user location and earthquake
             $distance = $this->calculateDistance(
                 $earthquake->latitude,
                 $earthquake->longitude,
-                $pref->latitude,
-                $pref->longitude
+                $userLat,
+                $userLon
             );
 
-            if ($distance <= $pref->radius_km && $earthquake->magnitude >= $pref->min_magnitude) {
-                Alert::create([
-                    'earthquake_id' => $earthquake->id,
-                    'user_id' => $pref->user_id,
-                    'type' => 'earthquake',
-                    'severity' => $earthquake->severity,
-                    'title' => "Magnitude {$earthquake->magnitude} Earthquake",
-                    'message' => "A magnitude {$earthquake->magnitude} earthquake occurred at {$earthquake->location}, approximately " . round($distance) . " km from your location.",
-                    'sent_at' => now(),
-                ]);
+            // Only create alert if earthquake is within user's radius and above minimum magnitude
+            if ($distance <= $radiusKm && $earthquake->magnitude >= $minMagnitude) {
+                // Check if alert already exists to avoid duplicates
+                $existingAlert = Alert::where('earthquake_id', $earthquake->id)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+                if (!$existingAlert) {
+                    Alert::create([
+                        'earthquake_id' => $earthquake->id,
+                        'user_id' => $user->id,
+                        'severity' => $this->getSeverityFromMagnitude($earthquake->magnitude),
+                        'is_read' => false,
+                        'sent_at' => now(),
+                    ]);
+                }
             }
+        }
+    }
+
+    /**
+     * Determine severity level based on earthquake magnitude
+     */
+    private function getSeverityFromMagnitude(float $magnitude): string
+    {
+        if ($magnitude >= 7.0) {
+            return 'critical';
+        } elseif ($magnitude >= 6.0) {
+            return 'high';
+        } elseif ($magnitude >= 4.5) {
+            return 'moderate';
+        } else {
+            return 'low';
         }
     }
 }

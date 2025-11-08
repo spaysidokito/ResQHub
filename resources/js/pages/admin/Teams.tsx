@@ -15,13 +15,13 @@ export default function AdminTeams() {
     return (
         <AdminSidebarLayout>
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-bold text-white">Teams</h1>
-                <Button variant="default" className="bg-black text-white border border-neutral-800 hover:bg-neutral-900">create team</Button>
+                <h1 className="text-2xl font-bold text-red-500">Teams</h1>
+                <Button variant="default" className="bg-black text-white border-2 border-red-600 hover:bg-red-950">create team</Button>
             </div>
-            <Card className="p-6 rounded-xl border border-neutral-800 bg-black max-w-4xl mx-auto">
+            <Card className="p-6 rounded-xl border-2 border-red-600 bg-black max-w-4xl mx-auto">
                 <table className="w-full text-left border-collapse bg-black text-white">
                     <thead>
-                        <tr className="border-b border-neutral-800">
+                        <tr className="border-b-2 border-red-600">
                             <th className="py-2 px-4">ID</th>
                             <th className="py-2 px-4">Name</th>
                             <th className="py-2 px-4">Members</th>
@@ -30,7 +30,7 @@ export default function AdminTeams() {
                     </thead>
                     <tbody>
                         {teams.map((team) => (
-                            <tr key={team.id} className="border-b border-neutral-800 last:border-b-0 hover:bg-neutral-900">
+                            <tr key={team.id} className="border-b border-red-600 last:border-b-0 hover:bg-red-950">
                                 <td className="py-2 px-4">{team.id}</td>
                                 <td className="py-2 px-4">{team.name}</td>
                                 <td className="py-2 px-4">{team.members}</td>

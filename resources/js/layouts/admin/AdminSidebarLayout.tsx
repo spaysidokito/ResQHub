@@ -6,17 +6,17 @@ export default function AdminSidebarLayout({ children }: PropsWithChildren) {
     return (
         <div className="flex h-screen bg-black">
             {/* Sidebar */}
-            <aside className="w-64 bg-black p-6 flex flex-col gap-6 min-h-screen">
-                <Button asChild variant="default" className="w-full bg-black text-white border border-neutral-800 hover:bg-neutral-900">
+            <aside className="w-64 bg-black p-6 flex flex-col gap-6 min-h-screen border-r-2 border-red-600">
+                <Button asChild variant="default" className="w-full bg-black text-white border-2 border-red-600 hover:bg-red-950">
                     <Link href="/admin">Dashboard</Link>
                 </Button>
-                <Button asChild variant="default" className="w-full bg-black text-white border border-neutral-800 hover:bg-neutral-900">
+                <Button asChild variant="default" className="w-full bg-black text-white border-2 border-red-600 hover:bg-red-950">
                     <Link href="/admin/accounts">Accounts</Link>
                 </Button>
-                <Button asChild variant="default" className="w-full bg-black text-white border border-neutral-800 hover:bg-neutral-900">
+                <Button asChild variant="default" className="w-full bg-black text-white border-2 border-red-600 hover:bg-red-950">
                     <Link href="/admin/teams">Teams</Link>
                 </Button>
-                <Button asChild variant="default" className="w-full bg-black text-white border border-neutral-800 hover:bg-neutral-900">
+                <Button asChild variant="default" className="w-full bg-black text-white border-2 border-red-600 hover:bg-red-950">
                     <Link href="/admin/shop">Shop</Link>
                 </Button>
             </aside>
