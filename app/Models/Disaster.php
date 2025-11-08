@@ -14,6 +14,12 @@ class Disaster extends Model
         'description',
         'latitude',
         'longitude',
+        'wind_speed',
+        'wind_direction',
+        'movement_direction',
+        'movement_speed',
+        'pressure',
+        'last_updated',
         'location',
         'country',
         'severity',
@@ -29,9 +35,13 @@ class Disaster extends Model
     protected $casts = [
         'latitude' => 'float',
         'longitude' => 'float',
+        'wind_speed' => 'integer',
+        'movement_speed' => 'float',
+        'pressure' => 'integer',
         'details' => 'array',
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'last_updated' => 'datetime',
         'is_verified' => 'boolean',
     ];
 

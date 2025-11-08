@@ -6,7 +6,6 @@ import WavesIcon from '@mui/icons-material/Waves';
 import TyphoonIcon from '@mui/icons-material/Cyclone';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
-// Fix Leaflet default marker icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -57,10 +56,8 @@ export default function RealMap({
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    // Initialize map centered on Philippines
     const map = L.map(mapContainerRef.current).setView([12.8797, 121.7740], 6);
 
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19,
@@ -81,7 +78,6 @@ export default function RealMap({
 
     const map = mapRef.current;
 
-    // Clear existing disaster/earthquake markers (but keep user location marker and radius)
     map.eachLayer((layer) => {
       if ((layer instanceof L.Marker || layer instanceof L.CircleMarker) &&
           layer !== userMarkerRef.current &&
@@ -90,12 +86,10 @@ export default function RealMap({
       }
     });
 
-    // Add earthquake markers
     earthquakes.forEach((eq) => {
-      const color = eq.magnitude >= 7 ? '#dc2626' :
-                    eq.magnitude >= 6 ? '#f97316' :
-                    eq.magnitude >= 5 ? '#eab308' :
-                    eq.magnitude >= 4 ? '#fbbf24' : '#10b981';
+      const color = eq.magnitude >= 6 ? '#dc2626' :
+                    eq.magnitude >= 5 ? '#ea580c' :
+                    eq.magnitude >= 4 ? '#eab308' : '#10b981';
 
       const circle = L.circleMarker([eq.latitude, eq.longitude], {
         radius: Math.max(5, eq.magnitude * 2),
@@ -115,7 +109,6 @@ export default function RealMap({
       `);
     });
 
-    // Add disaster markers
     disasters.forEach((disaster) => {
       const color = disaster.severity === 'critical' ? '#dc2626' :
                     disaster.severity === 'high' ? '#f97316' :
@@ -157,7 +150,6 @@ export default function RealMap({
     });
   }, [earthquakes, disasters]);
 
-  // Add user location and radius circle
   useEffect(() => {
     console.log('RealMap userLocation effect triggered:', userLocation);
     if (!mapRef.current || !userLocation) {
@@ -168,7 +160,6 @@ export default function RealMap({
     const map = mapRef.current;
     console.log('Drawing user location and radius circle');
 
-    // Remove existing user marker and radius circle
     if (radiusCircleRef.current) {
       map.removeLayer(radiusCircleRef.current);
     }
@@ -176,7 +167,6 @@ export default function RealMap({
       map.removeLayer(userMarkerRef.current);
     }
 
-    // Add radius circle
     console.log('Creating circle at:', userLocation.latitude, userLocation.longitude, 'with radius:', userLocation.radius_km * 1000, 'meters');
     const circle = L.circle([userLocation.latitude, userLocation.longitude], {
       radius: userLocation.radius_km * 1000, // Convert km to meters
@@ -190,7 +180,6 @@ export default function RealMap({
     console.log('Circle created and added to map');
     radiusCircleRef.current = circle;
 
-    // Add user location marker
     const userIcon = L.divIcon({
       className: 'custom-user-marker',
       html: `<div style="
@@ -231,7 +220,6 @@ export default function RealMap({
     console.log('User marker created and added to map');
     userMarkerRef.current = marker;
 
-    // Center map on user location
     console.log('Centering map on user location');
     map.setView([userLocation.latitude, userLocation.longitude], 8);
     console.log('Map centered');
@@ -246,14 +234,14 @@ export default function RealMap({
         style={{ minHeight: '400px' }}
       />
 
-      {/* Debug Info */}
+      {}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 p-2 bg-gray-800 rounded text-xs">
           <strong>Debug:</strong> userLocation = {userLocation ? JSON.stringify(userLocation) : 'null'}
         </div>
       )}
 
-      {/* Legend */}
+      {}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs">
         {userLocation && (
           <div className="flex items-center gap-2 px-3 py-1 bg-blue-900/30 border border-blue-600 rounded">
@@ -270,7 +258,7 @@ export default function RealMap({
           <span>M 4-5</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-orange-600" />
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ea580c' }} />
           <span>M 5-6</span>
         </div>
         <div className="flex items-center gap-2">

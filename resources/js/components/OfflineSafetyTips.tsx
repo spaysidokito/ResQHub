@@ -11,10 +11,9 @@ export default function OfflineSafetyTips() {
   const [selectedType, setSelectedType] = useState<string>('all');
 
   useEffect(() => {
-    // Initialize safety tips in storage
+
     offlineStorage.saveSafetyTips();
 
-    // Load tips
     loadTips();
   }, [selectedType]);
 
@@ -55,7 +54,7 @@ export default function OfflineSafetyTips() {
         📚 Offline Safety Guide
       </h3>
 
-      {/* Type Filter */}
+      {}
       <div className="flex flex-wrap gap-2 mb-4">
         {types.map((type) => (
           <button
@@ -73,7 +72,7 @@ export default function OfflineSafetyTips() {
         ))}
       </div>
 
-      {/* Safety Tips List */}
+      {}
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {safetyTips.length > 0 ? (
           safetyTips.map((tip) => (
@@ -103,7 +102,7 @@ export default function OfflineSafetyTips() {
         )}
       </div>
 
-      {/* Emergency Contacts */}
+      {}
       <div className="mt-4 pt-4 border-t border-gray-800">
         <h4 className="text-white font-semibold text-sm mb-2">
           📞 Emergency Contacts (Philippines)

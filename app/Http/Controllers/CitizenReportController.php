@@ -69,7 +69,6 @@ class CitizenReportController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
         ]);
 
-        // Handle photo upload
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -78,7 +77,6 @@ class CitizenReportController extends Controller
             $photoPath = 'uploads/reports/' . $filename;
         }
 
-        // Get disaster info to populate fields
         $disaster = \App\Models\Disaster::find($validated['disaster_id']);
 
         CitizenReport::create([
@@ -108,7 +106,6 @@ class CitizenReportController extends Controller
             'admin_notes' => $request->input('notes'),
         ]);
 
-        // Clear cache
         Cache::forget('citizen_reports_pending');
         Cache::forget('citizen_reports_verified');
 
@@ -127,7 +124,6 @@ class CitizenReportController extends Controller
             'admin_notes' => $request->input('notes'),
         ]);
 
-        // Clear cache
         Cache::forget('citizen_reports_pending');
         Cache::forget('citizen_reports_rejected');
 
@@ -139,7 +135,7 @@ class CitizenReportController extends Controller
 
     public function destroy(CitizenReport $report)
     {
-        // Delete the photo if it exists
+
         if ($report->photo && file_exists(public_path($report->photo))) {
             unlink(public_path($report->photo));
         }

@@ -126,7 +126,7 @@ export default function AdminAccounts() {
                         ))}
                     </tbody>
                 </table>
-                {/* Pagination (simple) */}
+                {}
                 <div className="flex justify-end mt-4 gap-2">
                     {accounts.links.map((link, i) => (
                         <Button
@@ -141,7 +141,7 @@ export default function AdminAccounts() {
                     ))}
                 </div>
             </Card>
-            {/* Create Account Modal */}
+            {}
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>
@@ -222,7 +222,7 @@ export default function AdminAccounts() {
                     </form>
                 </DialogContent>
             </Dialog>
-            {/* Edit Account Modal */}
+            {}
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>
@@ -292,7 +292,7 @@ export default function AdminAccounts() {
                     </form>
                 </DialogContent>
             </Dialog>
-            {/* Delete Confirmation Dialog */}
+            {}
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent className="bg-black border-2 border-red-600 text-white">
                     <DialogHeader>

@@ -3,8 +3,7 @@ import { useState } from 'react';
 export default function WindyMap() {
   const [isLoading, setIsLoading] = useState(true);
 
-  // Windy.com embed URL centered on Philippines with wind overlay
-  // This will show live typhoon data including Fung-wong (Uwan)
+
   const windyEmbedUrl = 'https://embed.windy.com/embed2.html?lat=14.600&lon=121.000&detailLat=14.600&detailLon=121.000&width=650&height=450&zoom=5&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1';
 
   return (
@@ -23,7 +22,7 @@ export default function WindyMap() {
         className="w-full rounded-lg border-0"
         style={{ height: '500px', minHeight: '500px' }}
         onLoad={() => setIsLoading(false)}
-        title="Windy Weather Map - Philippines Typhoon Tracking"
+        title="Windy Weather Map - Typhoon Tracking"
       />
 
 

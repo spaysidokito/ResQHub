@@ -89,7 +89,7 @@ export default function ShopIndex({ teams, shopItems }: Props) {
                 </div>
             </div>
 
-            {/* Team Selection */}
+            {}
             <Card>
                 <CardHeader>
                     <CardTitle>Select Team</CardTitle>
@@ -118,7 +118,7 @@ export default function ShopIndex({ teams, shopItems }: Props) {
                 </CardContent>
             </Card>
 
-            {/* Shop Items */}
+            {}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {shopItems.map((item) => (
                     <Card key={item.id} className="relative">
@@ -159,7 +159,7 @@ export default function ShopIndex({ teams, shopItems }: Props) {
                 ))}
             </div>
 
-            {/* Points Information */}
+            {}
             <Card>
                 <CardHeader>
                     <CardTitle>How Points Work</CardTitle>

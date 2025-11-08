@@ -28,15 +28,15 @@ export default function EarthquakeMap({
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Simple map visualization - in production, use Leaflet or Google Maps
+
     if (mapRef.current) {
       renderMap();
     }
   }, [earthquakes]);
 
   const renderMap = () => {
-    // Placeholder for map rendering
-    // In production, integrate with Leaflet.js or Google Maps API
+
+
   };
 
   const getMagnitudeColor = (magnitude: number) => {
@@ -53,7 +53,7 @@ export default function EarthquakeMap({
         ref={mapRef}
         className="w-full h-96 bg-gray-800 rounded-lg flex items-center justify-center relative overflow-hidden"
       >
-        {/* Placeholder map */}
+        {}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800">
           <div className="absolute inset-0 opacity-20">
             <svg className="w-full h-full" viewBox="0 0 100 100">
@@ -65,7 +65,7 @@ export default function EarthquakeMap({
           </div>
         </div>
 
-        {/* Earthquake markers */}
+        {}
         <div className="absolute inset-0">
           {earthquakes.slice(0, 20).map((eq) => {
             const x = ((eq.longitude + 180) / 360) * 100;
@@ -91,7 +91,7 @@ export default function EarthquakeMap({
             );
           })}
 
-          {/* Disaster markers */}
+          {}
           {disasters.slice(0, 20).map((disaster) => {
             const x = ((disaster.longitude + 180) / 360) * 100;
             const y = ((90 - disaster.latitude) / 180) * 100;
@@ -124,7 +124,7 @@ export default function EarthquakeMap({
         </div>
       </div>
 
-      {/* Legend */}
+      {}
       <div className="mt-4 flex items-center justify-center space-x-4 text-xs">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 rounded-full bg-green-500" />

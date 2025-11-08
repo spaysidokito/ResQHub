@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const mockAccounts = [
     { id: 12, name: 'John Doe', team: 'camelCase' },
-    // Add more mock accounts as needed
+
 ];
 
 export default function Accounts() {
@@ -13,14 +13,14 @@ export default function Accounts() {
 
     return (
         <div className="flex h-screen">
-            {/* Sidebar */}
+            {}
             <aside className="w-64 bg-neutral-200 p-6 flex flex-col gap-6">
                 <Button variant="outline" className="w-full">Dashboard</Button>
                 <Button variant="outline" className="w-full">Accounts</Button>
                 <Button variant="outline" className="w-full">Teams</Button>
                 <Button variant="outline" className="w-full">Shop</Button>
             </aside>
-            {/* Main Content */}
+            {}
             <main className="flex-1 bg-white p-12">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-2xl font-bold">Accounts</h1>

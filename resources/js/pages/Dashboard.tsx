@@ -100,7 +100,7 @@ export default function Dashboard({
         console.log('User location loaded:', location);
         setUserLocation(location);
       } else {
-        // Set default location if API fails
+
         const defaultLocation = {
           latitude: 14.5995,
           longitude: 120.9842,
@@ -112,7 +112,7 @@ export default function Dashboard({
       }
     } catch (error) {
       console.error('Error fetching user location:', error);
-      // Set default location
+
       const defaultLocation = {
         latitude: 14.5995,
         longitude: 120.9842,
@@ -124,7 +124,6 @@ export default function Dashboard({
     }
   };
 
-  // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (showUserMenu) {
@@ -140,7 +139,7 @@ export default function Dashboard({
   }, [showUserMenu]);
 
   const refreshData = async () => {
-    // If offline, load from cache
+
     if (!isOnline) {
       const offlineData = loadOfflineData();
       setEarthquakes(offlineData.earthquakes || []);
@@ -163,16 +162,14 @@ export default function Dashboard({
       setEarthquakes(newEarthquakes);
       setDisasters(newDisasters);
 
-      // Save to offline storage
       saveOfflineData({
         earthquakes: newEarthquakes,
         disasters: newDisasters,
       });
 
-      // Notifications disabled - using in-app alerts only
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Load from cache on error
+
       const offlineData = loadOfflineData();
       if (offlineData.earthquakes.length > 0 || offlineData.disasters.length > 0) {
         setEarthquakes(offlineData.earthquakes);
@@ -202,25 +199,25 @@ export default function Dashboard({
       <Head title="ResQHub - Multi-Disaster Monitoring (Philippines)" />
 
       <div className="min-h-screen bg-black text-white">
-        {/* Header */}
-        <header className="bg-gradient-to-r from-red-900 to-black border-b-2 border-red-600 px-4 md:px-6 py-3">
+        {}
+        <header className="bg-gradient-to-r from-red-900 to-black border-b-2 border-red-600 px-4 md:px-6 py-3 relative z-50">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex items-center space-x-4">
-              {/* Logo with white background */}
+              {}
               <div className="bg-white px-4 py-2 rounded-xl shadow-lg">
                 <img
                   src="/images/resqhub-logo.png"
                   alt="ResQHub Logo"
                   className="h-12 w-auto object-contain"
                   onError={(e) => {
-                    // Fallback to icon if image not found
+
                     e.currentTarget.style.display = 'none';
                     const fallback = e.currentTarget.parentElement?.nextElementSibling;
                     if (fallback) (fallback as HTMLElement).style.display = 'flex';
                   }}
                 />
               </div>
-              {/* Fallback Icon */}
+              {}
               <div className="w-12 h-12 bg-red-600 rounded-xl items-center justify-center hidden">
                 <PublicIcon sx={{ fontSize: 32, color: 'white' }} />
               </div>
@@ -279,7 +276,7 @@ export default function Dashboard({
                 )}
               </div>
 
-              {/* User Menu */}
+              {}
               <div className="relative user-menu-container">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
@@ -290,9 +287,9 @@ export default function Dashboard({
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 border-2 border-red-600 rounded-lg shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-64 bg-gray-800 border-2 border-red-600 rounded-lg shadow-lg z-[9999]">
                     <div className="p-2">
-                      <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700">
+                      <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700 truncate" title={auth?.user?.email}>
                         {auth?.user?.email}
                       </div>
 
@@ -321,7 +318,7 @@ export default function Dashboard({
           </div>
         </header>
 
-        {/* Disaster Type Tabs */}
+        {}
         <div className="bg-gray-900 border-b border-gray-800 px-4 md:px-6 py-3 overflow-x-auto">
           <div className="max-w-7xl mx-auto flex gap-2 min-w-max md:min-w-0">
             {[
@@ -347,17 +344,17 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Main Content */}
+        {}
         <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-            {/* Main Panel */}
+            {}
             <motion.div
               className="lg:col-span-2 space-y-4 md:space-y-6"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Map Section */}
+              {}
               <motion.div
                 className="bg-gray-900 rounded-lg border-2 border-red-600 p-4 md:p-6"
                 initial={{ opacity: 0, y: 20 }}
@@ -367,7 +364,7 @@ export default function Dashboard({
  >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl md:text-2xl font-bold text-red-500">
-                    {mapView === 'disasters' ? 'Live Disaster Map' : 'Weather Map'} - Philippines
+                    {mapView === 'disasters' ? 'Live Disaster Map' : 'Weather Map'}
                   </h2>
                   <div className="flex gap-2">
                     <button
@@ -401,7 +398,7 @@ export default function Dashboard({
                 )}
               </motion.div>
 
-              {/* Disaster List */}
+              {}
               <motion.div
                 className="bg-gray-900 rounded-lg border-2 border-red-600 p-4 md:p-6"
                 initial={{ opacity: 0, y: 20 }}
@@ -422,7 +419,7 @@ export default function Dashboard({
               </motion.div>
             </motion.div>
 
-            {/* Sidebar */}
+            {}
             <motion.div
               className="space-y-4 md:space-y-6"
               initial={{ opacity: 0, x: 20 }}
@@ -435,7 +432,7 @@ export default function Dashboard({
 
               <FloodMonitoring />
 
-              {/* Offline Safety Tips - Show when offline or on demand */}
+              {}
               {(!isOnline || showOfflineTips) && <OfflineSafetyTips />}
 
               <div className="bg-gray-900 rounded-lg border-2 border-red-600 p-4 md:p-6">
@@ -476,12 +473,12 @@ export default function Dashboard({
           </div>
         </main>
 
-        {/* Chatbot */}
+        {}
         {showChatbot && (
           <Chatbot onClose={() => setShowChatbot(false)} />
         )}
 
-        {/* Settings Modal */}
+        {}
         <AnimatePresence>
           {showSettings && (
             <SettingsModal
@@ -494,7 +491,7 @@ export default function Dashboard({
           )}
         </AnimatePresence>
 
-        {/* Offline Indicator */}
+        {}
         <OfflineIndicator />
       </div>
     </>

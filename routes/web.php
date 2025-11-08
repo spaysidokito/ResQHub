@@ -43,6 +43,8 @@ Route::prefix('api')->group(function () {
     Route::get('disasters/type/{type}', [DisasterController::class, 'byType']);
     Route::get('disasters/nearby', [DisasterController::class, 'nearby']);
 
+    Route::get('water-levels', [App\Http\Controllers\WaterLevelController::class, 'index']);
+
     // Alerts
     Route::get('alerts', [AlertController::class, 'index']);
     Route::get('alerts/unread-count', [AlertController::class, 'unreadCount']);

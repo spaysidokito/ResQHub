@@ -18,7 +18,7 @@ class GeminiService
 
     public function chat(string $message, array $context = []): array
     {
-        // If no API key, return error to use fallback
+
         if (empty($this->apiKey)) {
             return [
                 'success' => false,
@@ -29,10 +29,8 @@ class GeminiService
         try {
             $systemPrompt = $this->getSystemPrompt();
 
-            // Combine system prompt with user message
             $fullPrompt = $systemPrompt . "\n\nUser: " . $message . "\n\nAssistant:";
 
-            // Add context if provided
             if (!empty($context)) {
                 $fullPrompt = $systemPrompt . "\n\nContext: " . json_encode($context) . "\n\nUser: " . $message . "\n\nAssistant:";
             }
@@ -75,7 +73,6 @@ class GeminiService
             if ($response->successful()) {
                 $data = $response->json();
 
-                // Extract the response text
                 $reply = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'I apologize, but I could not generate a response.';
 
                 return [
@@ -87,7 +84,6 @@ class GeminiService
                 ];
             }
 
-            // Handle API errors
             $status = $response->status();
             $errorBody = $response->json();
             $errorMessage = $errorBody['error']['message'] ?? 'Unknown error';
@@ -149,17 +145,13 @@ Always prioritize safety and direct users to official sources when needed.
 Keep responses concise but informative.";
     }
 
-    /**
-     * Check if the API key is configured and valid
-     */
+    
     public function isConfigured(): bool
     {
         return !empty($this->apiKey);
     }
 
-    /**
-     * Test the API connection
-     */
+    
     public function testConnection(): array
     {
         if (!$this->isConfigured()) {

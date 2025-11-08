@@ -358,6 +358,10 @@
                     </div>
                     <div class="actions">
                         <button onclick="editDisaster(${disaster.id})" class="action-btn action-btn-edit" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">edit</span> Edit</button>
+                        ${!disaster.is_verified ?
+                            `<button onclick="verifyDisaster(${disaster.id})" class="action-btn" style="background: #10b981; color: white; display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">verified</span> Verify</button>` :
+                            `<button onclick="unverifyDisaster(${disaster.id})" class="action-btn" style="background: #eab308; color: white; display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">unpublished</span> Unverify</button>`
+                        }
                         ${disaster.status !== 'resolved' ? `<button onclick="resolveDisaster(${disaster.id})" class="action-btn action-btn-resolve" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">check_circle</span> Mark Resolved</button>` : ''}
                         <button onclick="deleteDisaster(${disaster.id})" class="action-btn action-btn-delete" style="display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 16px;">delete</span> Delete</button>
                     </div>
@@ -412,6 +416,7 @@
             document.getElementById('edit-location').value = currentDisaster.location;
             document.getElementById('edit-severity').value = currentDisaster.severity;
             document.getElementById('edit-status').value = currentDisaster.status;
+            document.getElementById('edit-verified').checked = currentDisaster.is_verified;
 
             document.getElementById('editModal').classList.add('active');
         }
@@ -432,6 +437,7 @@
                 location: document.getElementById('edit-location').value,
                 severity: document.getElementById('edit-severity').value,
                 status: document.getElementById('edit-status').value,
+                is_verified: document.getElementById('edit-verified').checked,
             };
 
             try {
@@ -486,6 +492,63 @@
             } catch (error) {
                 console.error('Resolve error:', error);
                 alert('❌ Error resolving disaster: ' + error.message);
+            }
+        }
+
+        async function verifyDisaster(id) {
+            if (!confirm('Mark this disaster as verified?')) return;
+
+            try {
+                const response = await fetch(`/admin/disasters/${id}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    loadDisasters();
+                    alert('✅ Disaster verified successfully!');
+                } else {
+                    const error = await response.json();
+                    console.error('Verify error:', error);
+                    alert('❌ Error verifying disaster: ' + (error.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Verify error:', error);
+                alert('❌ Error verifying disaster: ' + error.message);
+            }
+        }
+
+        async function unverifyDisaster(id) {
+            if (!confirm('Mark this disaster as unverified?')) return;
+
+            try {
+                const response = await fetch(`/admin/disasters/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ is_verified: false })
+                });
+
+                if (response.ok) {
+                    loadDisasters();
+                    alert('✅ Disaster marked as unverified!');
+                } else {
+                    const error = await response.json();
+                    console.error('Unverify error:', error);
+                    alert('❌ Error unverifying disaster: ' + (error.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Unverify error:', error);
+                alert('❌ Error unverifying disaster: ' + error.message);
             }
         }
 
@@ -572,6 +635,16 @@
                         <option value="resolved">Resolved</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="edit-verified" style="width: auto; cursor: pointer;">
+                    <span style="display: flex; align-items: center; gap: 0.25rem;">
+                        <span class="material-icons" style="font-size: 18px; color: #10b981;">verified</span>
+                        Verified Disaster
+                    </span>
+                </label>
             </div>
 
             <div class="modal-actions">

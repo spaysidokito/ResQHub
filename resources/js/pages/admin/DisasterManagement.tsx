@@ -47,7 +47,6 @@ export default function DisasterManagement({
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [hasNewData, setHasNewData] = useState(false);
 
-  // Auto-refresh every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       fetchLatestData();
@@ -69,7 +68,6 @@ export default function DisasterManagement({
       if (response.ok) {
         const data = await response.json();
 
-        // Check if there's new data
         const hasChanges =
           JSON.stringify(data.stats) !== JSON.stringify(stats) ||
           JSON.stringify(data.recentDisasters) !== JSON.stringify(recentDisasters);
@@ -116,7 +114,7 @@ export default function DisasterManagement({
       <Head title="Admin - Disaster Management" />
 
       <div className="min-h-screen bg-black text-white">
-        {/* Header */}
+        {}
         <header className="bg-gradient-to-r from-red-900 to-black border-b-2 border-red-600 px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -151,9 +149,9 @@ export default function DisasterManagement({
           </div>
         </header>
 
-        {/* Main Content */}
+        {}
         <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
-          {/* Stats Grid */}
+          {}
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 transition-all duration-300 ${hasNewData ? 'scale-[1.01]' : ''}`}>
             <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-4">
               <div className="flex items-center justify-between">
@@ -207,7 +205,7 @@ export default function DisasterManagement({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recent Disasters */}
+            {}
             <div className="lg:col-span-2 bg-gray-900 border-2 border-red-600 rounded-lg p-6">
               <h2 className="text-2xl font-bold text-red-500 mb-4">Recent Disasters</h2>
               <div className="space-y-3">
@@ -244,7 +242,7 @@ export default function DisasterManagement({
               </div>
             </div>
 
-            {/* Disasters by Type */}
+            {}
             <div className="bg-gray-900 border-2 border-red-600 rounded-lg p-6">
               <h2 className="text-2xl font-bold text-red-500 mb-4">By Type</h2>
               <div className="space-y-3">
@@ -300,7 +298,7 @@ export default function DisasterManagement({
             </div>
           </div>
 
-          {/* Info Box */}
+          {}
           <div className="mt-6 bg-red-900/20 border-2 border-red-600 rounded-lg p-6">
             <h3 className="text-xl font-bold text-red-500 mb-2">Admin Features</h3>
             <p className="text-gray-300 mb-4">

@@ -8,6 +8,12 @@ interface Disaster {
   status: 'active' | 'monitoring' | 'resolved';
   started_at: string;
   source: string;
+  wind_speed?: number;
+  wind_direction?: string;
+  movement_direction?: string;
+  movement_speed?: number;
+  pressure?: number;
+  last_updated?: string;
 }
 
 export default function DisasterPanel({ disasters }: { disasters: Disaster[] }) {
@@ -82,7 +88,7 @@ export default function DisasterPanel({ disasters }: { disasters: Disaster[] }) 
                 <div className="flex flex-wrap gap-2 text-xs text-gray-400">
                   <span>📍 {disaster.location}</span>
                   <span>•</span>
-                  <span>⏰ {getTimeAgo(disaster.started_at)}</span>
+                  <span>⏰ {getTimeAgo(disaster.last_updated || disaster.started_at)}</span>
                   <span>•</span>
                   <span>📡 {disaster.source}</span>
                 </div>

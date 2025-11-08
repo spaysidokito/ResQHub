@@ -26,7 +26,7 @@ export default function TeamsIndex({ ownedTeams, memberTeams }: TeamsIndexProps)
             <Head title="Teams" />
 
             <div className="container mx-auto p-6 space-y-6">
-                {/* Header */}
+                {}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold">Teams</h1>
@@ -40,7 +40,7 @@ export default function TeamsIndex({ ownedTeams, memberTeams }: TeamsIndexProps)
                     </Button>
                 </div>
 
-                {/* Join Team Form */}
+                {}
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export default function TeamsIndex({ ownedTeams, memberTeams }: TeamsIndexProps)
                     </CardContent>
                 </Card>
 
-                {/* Owned Teams */}
+                {}
                 {ownedTeams.length > 0 && (
                     <Card>
                         <CardHeader>
@@ -118,7 +118,7 @@ export default function TeamsIndex({ ownedTeams, memberTeams }: TeamsIndexProps)
                     </Card>
                 )}
 
-                {/* Member Teams */}
+                {}
                 {memberTeams.length > 0 && (
                     <Card>
                         <CardHeader>
@@ -160,7 +160,7 @@ export default function TeamsIndex({ ownedTeams, memberTeams }: TeamsIndexProps)
                     </Card>
                 )}
 
-                {/* Empty State */}
+                {}
                 {ownedTeams.length === 0 && memberTeams.length === 0 && (
                     <Card>
                         <CardContent className="text-center py-12">

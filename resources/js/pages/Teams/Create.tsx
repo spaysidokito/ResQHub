@@ -22,7 +22,7 @@ export default function TeamsCreate() {
             <Head title="Create Team" />
 
             <div className="container mx-auto p-6 max-w-2xl">
-                {/* Header */}
+                {}
                 <div className="flex items-center gap-4 mb-6">
                     <Button asChild variant="ghost" size="sm">
                         <Link href={route('teams.index')}>
@@ -87,7 +87,7 @@ export default function TeamsCreate() {
                     </CardContent>
                 </Card>
 
-                {/* Info Card */}
+                {}
                 <Card className="mt-6">
                     <CardHeader>
                         <CardTitle>What happens next?</CardTitle>

@@ -106,7 +106,6 @@ class GamificationController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        // Check if user already has this badge
         $existingAchievement = UserAchievement::where('user_id', $request->user_id)
             ->where('badge_id', $badge->id)
             ->where('team_id', $team->id)
@@ -116,7 +115,6 @@ class GamificationController extends Controller
             return back()->withErrors(['error' => 'User already has this badge.']);
         }
 
-        // Award the badge
         UserAchievement::create([
             'user_id' => $request->user_id,
             'badge_id' => $badge->id,
@@ -128,7 +126,6 @@ class GamificationController extends Controller
             ],
         ]);
 
-        // Award bonus points if any
         if ($badge->points_reward > 0) {
             UserPoint::create([
                 'user_id' => $request->user_id,

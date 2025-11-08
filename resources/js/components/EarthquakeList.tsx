@@ -4,6 +4,7 @@ interface Earthquake {
   location: string;
   depth: number;
   occurred_at: string;
+  updated_at?: string;
 }
 
 export default function EarthquakeList({ earthquakes }: { earthquakes: Earthquake[] }) {
@@ -46,7 +47,7 @@ export default function EarthquakeList({ earthquakes }: { earthquakes: Earthquak
                   <div>
                     <h4 className="font-semibold text-white">{eq.location}</h4>
                     <p className="text-sm text-gray-400">
-                      Depth: {eq.depth}km • {getTimeAgo(eq.occurred_at)}
+                      Depth: {eq.depth}km • Reported {getTimeAgo(eq.updated_at || eq.occurred_at)}
                     </p>
                   </div>
                 </div>

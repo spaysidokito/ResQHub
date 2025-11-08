@@ -32,7 +32,6 @@ class TeamChallenge extends Model
         'completed_at' => 'datetime',
     ];
 
-    // The team this challenge belongs to
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

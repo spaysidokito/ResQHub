@@ -1,7 +1,4 @@
-/**
- * Offline Storage Service
- * Manages local storage for offline functionality
- */
+
 
 interface CachedData {
   earthquakes: any[];
@@ -27,9 +24,7 @@ const STORAGE_KEYS = {
 };
 
 class OfflineStorageService {
-  /**
-   * Save disasters to local storage
-   */
+  
   saveDisasters(disasters: any[]): void {
     try {
       localStorage.setItem(STORAGE_KEYS.DISASTERS, JSON.stringify(disasters));
@@ -39,9 +34,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get disasters from local storage
-   */
+  
   getDisasters(): any[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.DISASTERS);
@@ -52,9 +45,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Save earthquakes to local storage
-   */
+  
   saveEarthquakes(earthquakes: any[]): void {
     try {
       localStorage.setItem(STORAGE_KEYS.EARTHQUAKES, JSON.stringify(earthquakes));
@@ -64,9 +55,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get earthquakes from local storage
-   */
+  
   getEarthquakes(): any[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.EARTHQUAKES);
@@ -77,9 +66,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Save alerts to local storage
-   */
+  
   saveAlerts(alerts: any[]): void {
     try {
       localStorage.setItem(STORAGE_KEYS.ALERTS, JSON.stringify(alerts));
@@ -89,9 +76,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get alerts from local storage
-   */
+  
   getAlerts(): any[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.ALERTS);
@@ -102,9 +87,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Save safety tips to local storage
-   */
+  
   saveSafetyTips(): void {
     const safetyTips: SafetyTip[] = [
       {
@@ -164,9 +147,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get safety tips from local storage
-   */
+  
   getSafetyTips(type?: string): SafetyTip[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SAFETY_TIPS);
@@ -183,9 +164,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Update last update timestamp
-   */
+  
   private updateLastUpdate(): void {
     try {
       localStorage.setItem(STORAGE_KEYS.LAST_UPDATE, new Date().toISOString());
@@ -194,9 +173,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get last update timestamp
-   */
+  
   getLastUpdate(): string | null {
     try {
       return localStorage.getItem(STORAGE_KEYS.LAST_UPDATE);
@@ -206,18 +183,14 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Check if data is available offline
-   */
+  
   hasOfflineData(): boolean {
     const disasters = this.getDisasters();
     const earthquakes = this.getEarthquakes();
     return disasters.length > 0 || earthquakes.length > 0;
   }
 
-  /**
-   * Clear all cached data
-   */
+  
   clearCache(): void {
     try {
       Object.values(STORAGE_KEYS).forEach(key => {
@@ -228,9 +201,7 @@ class OfflineStorageService {
     }
   }
 
-  /**
-   * Get cache size in KB
-   */
+  
   getCacheSize(): number {
     try {
       let total = 0;

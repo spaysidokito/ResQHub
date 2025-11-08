@@ -84,7 +84,7 @@ class EarthquakeService
         $users = \App\Models\User::all();
 
         foreach ($users as $user) {
-            // Get user preferences or use defaults
+
             $preference = \App\Models\UserPreference::where('user_id', $user->id)->first();
 
             $userLat = $preference->latitude ?? 14.5995; // Default: Manila
@@ -92,7 +92,6 @@ class EarthquakeService
             $radiusKm = $preference->radius_km ?? 100; // Default: 100km
             $minMagnitude = $preference->min_magnitude ?? 3.0; // Default: 3.0
 
-            // Calculate distance between user location and earthquake
             $distance = $this->calculateDistance(
                 $earthquake->latitude,
                 $earthquake->longitude,
@@ -100,9 +99,8 @@ class EarthquakeService
                 $userLon
             );
 
-            // Only create alert if earthquake is within user's radius and above minimum magnitude
             if ($distance <= $radiusKm && $earthquake->magnitude >= $minMagnitude) {
-                // Check if alert already exists to avoid duplicates
+
                 $existingAlert = Alert::where('earthquake_id', $earthquake->id)
                     ->where('user_id', $user->id)
                     ->first();
@@ -120,9 +118,7 @@ class EarthquakeService
         }
     }
 
-    /**
-     * Determine severity level based on earthquake magnitude
-     */
+    
     private function getSeverityFromMagnitude(float $magnitude): string
     {
         if ($magnitude >= 7.0) {

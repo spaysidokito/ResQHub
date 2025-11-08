@@ -14,7 +14,6 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        // Check if user has admin role
         if ($request->user()->role !== 'admin') {
             abort(403, 'Unauthorized access. Admin privileges required.');
         }

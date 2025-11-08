@@ -14,7 +14,6 @@ class ShopController extends Controller
     {
         $user = $request->user();
 
-        // Get user's teams and their points
         $teams = $user->teamMemberships()
             ->with(['team'])
             ->get()
@@ -28,7 +27,6 @@ class ShopController extends Controller
                 return $membership->team;
             });
 
-        // Define available shop items (this could be moved to a database table later)
         $shopItems = [
             [
                 'id' => 1,
@@ -81,7 +79,6 @@ class ShopController extends Controller
         $itemId = $request->item_id;
         $teamId = $request->team_id;
 
-        // Check if user is a member of the team
         $teamMembership = $user->teamMemberships()
             ->where('team_id', $teamId)
             ->first();
@@ -90,7 +87,6 @@ class ShopController extends Controller
             return back()->with('error', 'You are not a member of this team.');
         }
 
-        // Get user's points for this team
         $userPoints = UserPoint::where('team_id', $teamId)
             ->where('user_id', $user->id)
             ->selectRaw('SUM(CASE WHEN type = "earned" THEN points ELSE 0 END) - SUM(CASE WHEN type = "spent" THEN points ELSE 0 END) as total_points')
@@ -98,7 +94,6 @@ class ShopController extends Controller
 
         $availablePoints = $userPoints->total_points ?? 0;
 
-        // Define shop items (same as in index method)
         $shopItems = [
             1 => ['name' => 'Custom Badge', 'points_cost' => 100, 'type' => 'badge', 'available_for' => 'team_owner'],
             2 => ['name' => 'Team Theme', 'points_cost' => 50, 'type' => 'theme', 'available_for' => 'team_owner'],
@@ -112,17 +107,14 @@ class ShopController extends Controller
 
         $item = $shopItems[$itemId];
 
-        // Check if user has enough points
         if ($availablePoints < $item['points_cost']) {
             return back()->with('error', 'Insufficient points to purchase this item.');
         }
 
-        // Check if user can purchase this item
         if ($item['available_for'] === 'team_owner' && $teamMembership->role !== 'owner') {
             return back()->with('error', 'Only team owners can purchase this item.');
         }
 
-        // Deduct points
         UserPoint::create([
             'user_id' => $user->id,
             'team_id' => $teamId,
@@ -131,19 +123,18 @@ class ShopController extends Controller
             'description' => "Purchased: {$item['name']}",
         ]);
 
-        // Handle the purchase based on item type
         switch ($item['type']) {
             case 'badge':
-                // Logic for creating custom badge
+
                 break;
             case 'theme':
-                // Logic for applying team theme
+
                 break;
             case 'multiplier':
-                // Logic for applying points multiplier
+
                 break;
             case 'boost':
-                // Logic for activity boost
+
                 break;
         }
 

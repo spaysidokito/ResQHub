@@ -10,4 +10,7 @@ Artisan::command('inspire', function () {
 
 // Schedule real-time disaster data fetching
 Schedule::command('earthquakes:fetch')->everyFiveMinutes();
+Schedule::command('disasters:fetch')->everyTenMinutes();
+Schedule::command('pagasa:scrape')->everyFifteenMinutes();
+Schedule::command('typhoons:update')->everyTenMinutes();
 Schedule::command('disasters:clear-test')->daily();

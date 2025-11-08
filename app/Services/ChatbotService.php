@@ -11,32 +11,26 @@ class ChatbotService
     {
         $message = strtolower(trim($message));
 
-        // Safety information
         if ($this->containsKeywords($message, ['safety', 'safe', 'what to do', 'help', 'protect'])) {
             return $this->getSafetyTips();
         }
 
-        // Recent earthquakes
         if ($this->containsKeywords($message, ['recent', 'latest', 'today', 'now'])) {
             return $this->getRecentEarthquakes();
         }
 
-        // Earthquake statistics
         if ($this->containsKeywords($message, ['statistics', 'stats', 'count', 'how many'])) {
             return $this->getStatistics();
         }
 
-        // Magnitude information
         if ($this->containsKeywords($message, ['magnitude', 'scale', 'richter'])) {
             return $this->getMagnitudeInfo();
         }
 
-        // Emergency contacts
         if ($this->containsKeywords($message, ['emergency', 'contact', 'hotline', 'call'])) {
             return $this->getEmergencyContacts();
         }
 
-        // Default response
         return $this->getDefaultResponse();
     }
 

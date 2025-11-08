@@ -51,7 +51,6 @@ class TeamController extends Controller
             ],
         ]);
 
-        // Add owner as team member
         TeamMember::create([
             'team_id' => $team->id,
             'user_id' => $request->user()->id,
@@ -66,13 +65,11 @@ class TeamController extends Controller
     {
         $team->load(['owner', 'members.user', 'activities', 'badges', 'challenges']);
 
-        // Get team statistics
         $memberCount = $team->members()->count();
         $activeActivities = $team->activities()->where('is_active', true)->count();
         $totalBadges = $team->badges()->count();
         $activeChallenges = $team->challenges()->where('status', 'active')->count();
 
-        // Get leaderboard for this team
         $leaderboard = \App\Models\UserPoint::where('team_id', $team->id)
             ->selectRaw('user_id, SUM(CASE WHEN type = "earned" THEN points ELSE 0 END) - SUM(CASE WHEN type = "spent" THEN points ELSE 0 END) as total_points')
             ->groupBy('user_id')
@@ -103,7 +100,6 @@ class TeamController extends Controller
             return back()->withErrors(['invite_code' => 'Invalid invite code.']);
         }
 
-        // Check if user is already a member
         $existingMember = TeamMember::where('team_id', $team->id)
             ->where('user_id', $request->user()->id)
             ->first();

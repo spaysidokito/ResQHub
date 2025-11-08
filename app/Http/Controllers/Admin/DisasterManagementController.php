@@ -31,7 +31,6 @@ class DisasterManagementController extends Controller
             ->groupBy('type')
             ->get();
 
-        // Return simple view for now
         return view('admin.disasters', [
             'stats' => $stats,
             'recentDisasters' => $recentDisasters,
@@ -76,7 +75,7 @@ class DisasterManagementController extends Controller
 
     public function disasters(Request $request)
     {
-        // If it's an AJAX request or wants JSON, return JSON
+
         if ($request->wantsJson() || $request->ajax()) {
             $query = Disaster::query();
 
@@ -98,7 +97,6 @@ class DisasterManagementController extends Controller
             return response()->json($disasters);
         }
 
-        // Otherwise return the view
         return view('admin.disasters-list');
     }
 
@@ -125,10 +123,8 @@ class DisasterManagementController extends Controller
 
         $disaster = Disaster::create($validated);
 
-        // Create alerts for all users
         $this->createAlertsForDisaster($disaster);
 
-        // If it's a web request (not API), redirect back with success message
         if (!$request->expectsJson()) {
             return redirect()->route('admin.disasters')
                 ->with('success', 'Disaster "' . $disaster->name . '" created successfully!');
@@ -168,7 +164,6 @@ class DisasterManagementController extends Controller
         $isSimulation = $disaster->source === 'SIMULATION';
         $disaster->delete();
 
-        // If it's a web request (not API), redirect back with success message
         if (request()->expectsJson()) {
             return response()->json([
                 'message' => $isSimulation ? 'Simulation stopped successfully' : 'Disaster deleted successfully',
@@ -234,7 +229,7 @@ class DisasterManagementController extends Controller
 
     public function simulate()
     {
-        // Simulate a random disaster for testing
+
         $types = ['flood', 'typhoon', 'fire', 'earthquake'];
         $severities = ['low', 'moderate', 'high', 'critical'];
         $locations = [
@@ -277,19 +272,16 @@ class DisasterManagementController extends Controller
             ],
         ]);
 
-        // Create alerts for all users
         $this->createAlertsForDisaster($disaster);
 
         return redirect()->route('admin.disasters')
             ->with('success', 'Simulated disaster created successfully! Check the dashboard to see it.');
     }
 
-    /**
-     * Simulate an alert for testing
-     */
+    
     public function simulateAlert()
     {
-        // Create a test disaster for the alert
+
         $severities = ['low', 'moderate', 'high', 'critical'];
         $types = ['flood', 'typhoon', 'fire', 'earthquake'];
 
@@ -316,7 +308,6 @@ class DisasterManagementController extends Controller
             ],
         ]);
 
-        // Create alerts for all users
         $this->createAlertsForDisaster($disaster);
 
         return response()->json([
@@ -325,16 +316,13 @@ class DisasterManagementController extends Controller
         ]);
     }
 
-    /**
-     * Stop all test alerts and remove test disasters
-     */
+    
     public function stopTestAlerts()
     {
-        // Find all test disasters
+
         $testDisasters = Disaster::where('source', 'TEST_ALERT')->get();
         $count = $testDisasters->count();
 
-        // Delete all test disasters (this will cascade delete their alerts)
         Disaster::where('source', 'TEST_ALERT')->delete();
 
         return response()->json([
@@ -342,23 +330,19 @@ class DisasterManagementController extends Controller
         ]);
     }
 
-    /**
-     * Create alerts for users within their specified radius when a disaster is created
-     */
+    
     private function createAlertsForDisaster(Disaster $disaster)
     {
         $users = User::all();
 
         foreach ($users as $user) {
-            // Get user preferences
+
             $preference = UserPreference::where('user_id', $user->id)->first();
 
-            // If no preference, use defaults (100km radius, Manila location)
             $userLat = $preference->latitude ?? 14.5995;
             $userLon = $preference->longitude ?? 120.9842;
             $radiusKm = $preference->radius_km ?? 100;
 
-            // Calculate distance between user location and disaster location
             $distance = $this->calculateDistance(
                 $userLat,
                 $userLon,
@@ -366,7 +350,6 @@ class DisasterManagementController extends Controller
                 $disaster->longitude
             );
 
-            // Only create alert if disaster is within user's radius
             if ($distance <= $radiusKm) {
                 Alert::create([
                     'disaster_id' => $disaster->id,
@@ -379,10 +362,7 @@ class DisasterManagementController extends Controller
         }
     }
 
-    /**
-     * Calculate distance between two coordinates using Haversine formula
-     * Returns distance in kilometers
-     */
+    
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
     {
         $earthRadius = 6371; // Earth's radius in kilometers

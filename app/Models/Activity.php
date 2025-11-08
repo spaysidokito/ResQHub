@@ -28,13 +28,11 @@ class Activity extends Model
         'end_date' => 'datetime',
     ];
 
-    // The team this activity belongs to
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
-    // Tasks under this activity
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);

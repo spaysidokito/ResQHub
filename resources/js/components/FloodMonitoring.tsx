@@ -19,7 +19,10 @@ interface WaterLevelStation {
 }
 
 export default function FloodMonitoring() {
-  const [stations, setStations] = useState<WaterLevelStation[]>([
+  const [stations, setStations] = useState<WaterLevelStation[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastFetch, setLastFetch] = useState<Date>(new Date());
+  const [initialStations] = useState<WaterLevelStation[]>([
     {
       id: 1,
       name: 'Angono',
@@ -66,7 +69,40 @@ export default function FloodMonitoring() {
     },
   ]);
 
-  const [selectedStation, setSelectedStation] = useState<WaterLevelStation | null>(stations[2]); // La Mesa Dam
+  const [selectedStation, setSelectedStation] = useState<WaterLevelStation | null>(null);
+
+  useEffect(() => {
+    fetchWaterLevels();
+  }, []);
+
+  useEffect(() => {
+    if (stations.length > 0 && !selectedStation) {
+      setSelectedStation(stations[2] || stations[0]);
+    }
+  }, [stations]);
+
+  const fetchWaterLevels = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/water-levels');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.stations && data.stations.length > 0) {
+          setStations(data.stations);
+        } else {
+          setStations(initialStations);
+        }
+      } else {
+        setStations(initialStations);
+      }
+      setLastFetch(new Date());
+    } catch (error) {
+      console.error('Error fetching water levels:', error);
+      setStations(initialStations);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -111,17 +147,53 @@ export default function FloodMonitoring() {
 
   const getWaterLevelPercentage = (station: WaterLevelStation) => {
     if (station.status === 'unavailable') return 0;
-    return Math.min((station.waterLevel / station.criticalLevel) * 100, 100);
+    const minLevel = station.alertLevel * 0.7;
+    const range = station.criticalLevel - minLevel;
+    const currentFromMin = station.waterLevel - minLevel;
+    return Math.min(Math.max((currentFromMin / range) * 100, 0), 100);
+  };
+
+  const getBarColor = (station: WaterLevelStation) => {
+    if (station.status === 'critical') return 'bg-red-500';
+    if (station.status === 'alert') return 'bg-yellow-500';
+    return 'bg-green-500';
   };
 
   return (
     <div className="bg-gray-900 rounded-lg border-2 border-red-600 p-4 md:p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <WavesIcon className="text-blue-400" sx={{ fontSize: 24 }} />
-        <h3 className="text-lg md:text-xl font-bold text-red-500">Flood Monitoring</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <WavesIcon className="text-blue-400" sx={{ fontSize: 24 }} />
+          <h3 className="text-lg md:text-xl font-bold text-red-500">Flood Monitoring</h3>
+        </div>
+        <button
+          onClick={fetchWaterLevels}
+          disabled={isLoading}
+          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg transition text-xs flex items-center gap-1"
+          title="Refresh water levels"
+        >
+          <svg
+            className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          <span className="hidden sm:inline">{isLoading ? 'Refreshing...' : 'Refresh'}</span>
+        </button>
       </div>
 
-      {/* Selected Station Detail */}
+      <div className="text-xs text-gray-400 mb-3">
+        Last updated: {lastFetch.toLocaleTimeString()}
+      </div>
+
+      {}
       {selectedStation && selectedStation.status !== 'unavailable' && (
         <div className="bg-blue-600 rounded-lg p-4 mb-4">
           <div className="text-center">
@@ -130,21 +202,15 @@ export default function FloodMonitoring() {
             <p className="text-blue-200 text-xs">Water Level</p>
           </div>
 
-          {/* Water Level Bar */}
+          {}
           <div className="mt-4 bg-blue-800 rounded-full h-3 overflow-hidden">
             <div
-              className={`h-full transition-all duration-500 ${
-                getWaterLevelPercentage(selectedStation) > 90
-                  ? 'bg-red-500'
-                  : getWaterLevelPercentage(selectedStation) > 75
-                  ? 'bg-yellow-500'
-                  : 'bg-green-500'
-              }`}
+              className={`h-full transition-all duration-500 ${getBarColor(selectedStation)}`}
               style={{ width: `${getWaterLevelPercentage(selectedStation)}%` }}
             />
           </div>
 
-          {/* Levels */}
+          {}
           <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
             <div className="text-center">
               <p className="text-blue-200">Normal</p>
@@ -162,7 +228,7 @@ export default function FloodMonitoring() {
         </div>
       )}
 
-      {/* Station List */}
+      {}
       <div className="space-y-2">
         <p className="text-gray-400 text-xs mb-2">Monitoring Stations:</p>
         {stations.map((station) => (
@@ -198,16 +264,10 @@ export default function FloodMonitoring() {
                   </div>
                 </div>
 
-                {/* Mini progress bar */}
+                {}
                 <div className="mt-2 bg-gray-700 rounded-full h-1.5 overflow-hidden">
                   <div
-                    className={`h-full transition-all ${
-                      getWaterLevelPercentage(station) > 90
-                        ? 'bg-red-500'
-                        : getWaterLevelPercentage(station) > 75
-                        ? 'bg-yellow-500'
-                        : 'bg-green-500'
-                    }`}
+                    className={`h-full transition-all ${getBarColor(station)}`}
                     style={{ width: `${getWaterLevelPercentage(station)}%` }}
                   />
                 </div>
@@ -221,7 +281,7 @@ export default function FloodMonitoring() {
         ))}
       </div>
 
-      {/* Data Source */}
+      {}
       <div className="mt-4 pt-4 border-t border-gray-800">
         <p className="text-gray-500 text-xs text-center">
           Data from{' '}

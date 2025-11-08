@@ -115,7 +115,6 @@ class ActivityController extends Controller
             'completed_at' => $newStatus === 'completed' ? now() : null,
         ]);
 
-        // Award points when task is completed
         if ($newStatus === 'completed' && $oldStatus !== 'completed') {
             $points = $activity->point_value;
 

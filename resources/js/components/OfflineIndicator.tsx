@@ -20,7 +20,6 @@ export default function OfflineIndicator() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Update cache info
     const updateCacheInfo = () => {
       setLastUpdate(offlineStorage.getLastUpdate());
       setCacheSize(offlineStorage.getCacheSize());

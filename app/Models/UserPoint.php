@@ -21,13 +21,11 @@ class UserPoint extends Model
         'points' => 'integer',
     ];
 
-    // The user who earned or spent the points
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // The team context for the points
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

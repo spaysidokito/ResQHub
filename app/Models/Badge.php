@@ -26,13 +26,11 @@ class Badge extends Model
         'is_active' => 'boolean',
     ];
 
-    // The team this badge belongs to
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
-    // User achievements for this badge
     public function userAchievements(): HasMany
     {
         return $this->hasMany(UserAchievement::class);

@@ -28,9 +28,29 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
   });
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     fetchPreferences();
+  }, []);
+
+  useEffect(() => {
+    setLocationSearch(preferences.location_name);
+  }, [preferences.location_name]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.location-autocomplete')) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const fetchPreferences = async () => {
@@ -62,12 +82,10 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
       const data = await response.json();
       setMessage('Settings saved successfully!');
 
-      // Call onSave callback to refresh user location on parent component
       if (onSave) {
         onSave();
       }
 
-      // Close modal after a short delay to show success message
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -79,16 +97,83 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
     }
   };
 
+  const searchLocation = async (query: string) => {
+    if (query.length < 3) {
+      setLocationSuggestions([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'ResQHub Disaster Management System',
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setLocationSuggestions(data);
+        setShowSuggestions(true);
+      }
+    } catch (error) {
+      console.error('Error searching location:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const selectLocation = (location: any) => {
+    setPreferences({
+      ...preferences,
+      latitude: parseFloat(location.lat),
+      longitude: parseFloat(location.lon),
+      location_name: location.display_name,
+    });
+    setLocationSearch(location.display_name);
+    setShowSuggestions(false);
+    setLocationSuggestions([]);
+  };
+
   const useCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPreferences({
-            ...preferences,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            location_name: 'Current Location',
-          });
+        async (position) => {
+
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`,
+              {
+                headers: {
+                  'User-Agent': 'ResQHub Disaster Management System',
+                },
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              setPreferences({
+                ...preferences,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                location_name: data.display_name || 'Current Location',
+              });
+              setLocationSearch(data.display_name || 'Current Location');
+            }
+          } catch (error) {
+            console.error('Error reverse geocoding:', error);
+            setPreferences({
+              ...preferences,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              location_name: 'Current Location',
+            });
+            setLocationSearch('Current Location');
+          }
         },
         (error) => {
           console.error('Error getting location:', error);
@@ -117,7 +202,7 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
         transition={{ duration: 0.3 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {}
         <div className="bg-gradient-to-r from-red-900 to-black px-6 py-4 border-b-2 border-red-600 flex items-center justify-between sticky top-0">
           <h2 className="text-2xl font-bold text-red-500">Settings</h2>
           <button
@@ -128,22 +213,56 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="p-6 space-y-6">
-          {/* Location Settings */}
+          {}
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <LocationOnIcon /> Location Settings
             </h3>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-2">Location Name</label>
+              <div className="relative location-autocomplete">
+                <label className="block text-sm text-gray-400 mb-2">Search Location</label>
                 <input
                   type="text"
-                  value={preferences.location_name}
-                  onChange={(e) => setPreferences({ ...preferences, location_name: e.target.value })}
+                  value={locationSearch || preferences.location_name}
+                  onChange={(e) => {
+                    setLocationSearch(e.target.value);
+                    searchLocation(e.target.value);
+                  }}
+                  onFocus={() => locationSuggestions.length > 0 && setShowSuggestions(true)}
+                  placeholder="Type to search for a location..."
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-red-600"
                 />
+                {isSearching && (
+                  <div className="absolute right-3 top-10 text-gray-400">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+                  </div>
+                )}
+
+                {}
+                {showSuggestions && locationSuggestions.length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-red-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    {locationSuggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => selectLocation(suggestion)}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-700 transition border-b border-gray-700 last:border-b-0"
+                      >
+                        <div className="flex items-start gap-2">
+                          <LocationOnIcon sx={{ fontSize: 18, color: '#ef4444' }} className="mt-0.5" />
+                          <div className="flex-1">
+                            <div className="text-white text-sm">{suggestion.display_name}</div>
+                            <div className="text-gray-400 text-xs mt-1">
+                              {suggestion.lat.substring(0, 8)}, {suggestion.lon.substring(0, 8)}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -178,7 +297,7 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
             </div>
           </div>
 
-          {/* Alert Settings */}
+          {}
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <NotificationsIcon /> Alert Settings
@@ -216,7 +335,7 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
             </div>
           </div>
 
-          {/* Notification Preferences */}
+          {}
           <div>
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <VolumeUpIcon /> Notification Preferences
@@ -234,14 +353,14 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
             </div>
           </div>
 
-          {/* Message */}
+          {}
           {message && (
             <div className={`p-4 rounded-lg ${message.includes('Error') ? 'bg-red-900 border border-red-700' : 'bg-green-900 border border-green-700'}`}>
               <p className="text-white text-sm">{message}</p>
             </div>
           )}
 
-          {/* Actions */}
+          {}
           <div className="flex space-x-4">
             <button
               onClick={savePreferences}

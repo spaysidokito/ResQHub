@@ -17,7 +17,6 @@ class ChatbotController extends Controller
             'message' => 'required|string|max:500',
         ]);
 
-        // Get recent disasters for context
         $context = [
             'active_disasters' => \App\Models\Disaster::where('status', 'active')
                 ->where('country', 'Philippines')

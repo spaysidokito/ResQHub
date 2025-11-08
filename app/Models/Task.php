@@ -26,25 +26,21 @@ class Task extends Model
         'verified_at' => 'datetime',
     ];
 
-    // The activity this task belongs to
     public function activity(): BelongsTo
     {
         return $this->belongsTo(Activity::class);
     }
 
-    // The user who completed the task
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // The team this task belongs to
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
-    // The user who verified the task
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');

@@ -16,20 +16,17 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // Get user's teams
         $teams = $user->teamMemberships()
             ->with(['team.owner', 'team.members.user'])
             ->get()
             ->pluck('team');
 
-        // Get user's achievements
         $achievements = $user->achievements()
             ->with(['badge', 'team'])
             ->latest('earned_at')
             ->take(5)
             ->get();
 
-        // Get user's points summary
         $pointsSummary = $user->points()
             ->selectRaw('team_id, SUM(CASE WHEN type = "earned" THEN points ELSE 0 END) as total_earned, SUM(CASE WHEN type = "spent" THEN points ELSE 0 END) as total_spent')
             ->groupBy('team_id')
@@ -40,14 +37,12 @@ class DashboardController extends Controller
                 return $summary;
             });
 
-        // Get recent tasks
         $recentTasks = $user->tasks()
             ->with(['activity', 'team'])
             ->latest()
             ->take(10)
             ->get();
 
-        // Get leaderboard data for user's teams
         $leaderboards = [];
         foreach ($teams as $team) {
             $leaderboards[$team->id] = UserPoint::where('team_id', $team->id)

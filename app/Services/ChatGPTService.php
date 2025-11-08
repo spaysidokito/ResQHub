@@ -19,17 +19,16 @@ class ChatGPTService
 
     public function chat(string $message, array $context = []): array
     {
-        // Try Google Gemini first (free and excellent for Filipino)
+
         if ($this->geminiService->isConfigured()) {
             $geminiResponse = $this->geminiService->chat($message, $context);
             if ($geminiResponse['success'] ?? false) {
                 return $geminiResponse;
             }
-            // If Gemini fails, log and continue to next option
+
             Log::info('Gemini API failed, trying next option', ['error' => $geminiResponse['error'] ?? 'Unknown']);
         }
 
-        // Try OpenAI if configured
         if (!empty($this->apiKey)) {
             $openaiResponse = $this->tryOpenAI($message, $context);
             if ($openaiResponse !== null) {
@@ -37,7 +36,6 @@ class ChatGPTService
             }
         }
 
-        // Fall back to rule-based responses
         return $this->fallbackResponse($message);
     }
 
@@ -51,7 +49,6 @@ class ChatGPTService
                 ['role' => 'system', 'content' => $systemPrompt],
             ];
 
-            // Add context if provided
             if (!empty($context)) {
                 $messages[] = ['role' => 'assistant', 'content' => 'Context: ' . json_encode($context)];
             }
@@ -123,7 +120,6 @@ Always prioritize safety and direct users to official sources when needed.";
     {
         $message = strtolower(trim($message));
 
-        // Greetings in English
         if ($this->containsKeywords($message, ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'])) {
             return [
                 'type' => 'greeting',
@@ -138,7 +134,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Greetings in Tagalog
         if ($this->containsKeywords($message, ['kumusta', 'kamusta', 'musta', 'magandang umaga', 'magandang hapon', 'magandang gabi'])) {
             return [
                 'type' => 'greeting',
@@ -153,7 +148,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Safety information (English)
         if ($this->containsKeywords($message, ['safety', 'safe', 'what to do', 'protect'])) {
             return [
                 'type' => 'safety',
@@ -171,7 +165,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Safety information (Tagalog)
         if ($this->containsKeywords($message, ['kaligtasan', 'ligtas', 'ano gagawin', 'paano', 'protektahan'])) {
             return [
                 'type' => 'safety',
@@ -189,7 +182,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Emergency contacts
         if ($this->containsKeywords($message, ['emergency', 'contact', 'hotline', 'call', 'number', 'tulong', 'tawag'])) {
             return [
                 'type' => 'emergency',
@@ -205,7 +197,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Typhoon Uwan specific
         if ($this->containsKeywords($message, ['uwan', 'fung-wong', 'typhoon', 'bagyo'])) {
             return [
                 'type' => 'typhoon',
@@ -224,7 +215,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Help/Default response
         if ($this->containsKeywords($message, ['help', 'tulong', 'ano', 'what'])) {
             return [
                 'type' => 'help',
@@ -240,7 +230,6 @@ Always prioritize safety and direct users to official sources when needed.";
             ];
         }
 
-        // Default response
         return [
             'type' => 'help',
             'title' => 'ResQBot - Disaster Assistant',

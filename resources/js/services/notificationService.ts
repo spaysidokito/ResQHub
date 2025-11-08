@@ -1,7 +1,4 @@
-/**
- * Notification Service
- * Manages browser notifications for alerts
- */
+
 
 class NotificationService {
   private permission: NotificationPermission = 'default';
@@ -12,9 +9,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Request notification permission from user
-   */
+  
   async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
       console.warn('This browser does not support notifications');
@@ -35,25 +30,19 @@ class NotificationService {
     }
   }
 
-  /**
-   * Check if notifications are supported and permitted
-   */
+  
   isSupported(): boolean {
     return 'Notification' in window && this.permission === 'granted';
   }
 
-  /**
-   * Show a notification (DISABLED - notifications removed)
-   */
+  
   async show(title: string, options?: NotificationOptions): Promise<void> {
-    // Browser notifications disabled
+
     console.log('Browser notification disabled:', title);
     return;
   }
 
-  /**
-   * Show disaster alert notification
-   */
+  
   async showDisasterAlert(disaster: any): Promise<void> {
     const severityEmoji = {
       critical: '🚨',
@@ -72,9 +61,7 @@ class NotificationService {
     });
   }
 
-  /**
-   * Show earthquake alert notification
-   */
+  
   async showEarthquakeAlert(earthquake: any): Promise<void> {
     const magnitudeEmoji = earthquake.magnitude >= 6 ? '🚨' : earthquake.magnitude >= 4 ? '⚠️' : 'ℹ️';
 
@@ -86,9 +73,7 @@ class NotificationService {
     });
   }
 
-  /**
-   * Show general alert notification
-   */
+  
   async showAlert(alert: any): Promise<void> {
     const typeEmoji = {
       earthquake: '🌍',
@@ -106,9 +91,7 @@ class NotificationService {
     });
   }
 
-  /**
-   * Show offline mode notification
-   */
+  
   async showOfflineNotification(): Promise<void> {
     await this.show('📴 Offline Mode', {
       body: 'You are now offline. Showing cached data from last update.',
@@ -116,9 +99,7 @@ class NotificationService {
     });
   }
 
-  /**
-   * Show online mode notification
-   */
+  
   async showOnlineNotification(): Promise<void> {
     await this.show('✅ Back Online', {
       body: 'Connection restored. Refreshing data...',

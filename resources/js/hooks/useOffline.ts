@@ -6,10 +6,9 @@ export function useOffline() {
   const [hasOfflineData, setHasOfflineData] = useState(false);
 
   useEffect(() => {
-    // Check if we have offline data
+
     setHasOfflineData(offlineStorage.hasOfflineData());
 
-    // Notifications disabled
 
     const handleOnline = () => {
       setIsOnline(true);
@@ -28,9 +27,7 @@ export function useOffline() {
     };
   }, []);
 
-  /**
-   * Save data to offline storage
-   */
+  
   const saveOfflineData = (data: {
     earthquakes?: any[];
     disasters?: any[];
@@ -48,9 +45,7 @@ export function useOffline() {
     setHasOfflineData(true);
   };
 
-  /**
-   * Load data from offline storage
-   */
+  
   const loadOfflineData = () => {
     return {
       earthquakes: offlineStorage.getEarthquakes(),
@@ -59,9 +54,7 @@ export function useOffline() {
     };
   };
 
-  /**
-   * Clear offline cache
-   */
+  
   const clearOfflineCache = () => {
     offlineStorage.clearCache();
     setHasOfflineData(false);

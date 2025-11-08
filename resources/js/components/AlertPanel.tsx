@@ -17,7 +17,7 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
 
   useEffect(() => {
-    // Initialize audio context on user interaction (required for mobile)
+
     const initAudio = () => {
       if (!audioContext) {
         const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -25,19 +25,15 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
       }
     };
 
-    // Add click listener to initialize audio
     document.addEventListener('click', initAudio, { once: true });
     document.addEventListener('touchstart', initAudio, { once: true });
 
-    // Initial fetch (don't notify on first load)
     fetchAlerts(true);
 
-    // Auto-refresh every 5 seconds (notify on subsequent loads)
     const interval = setInterval(() => {
       fetchAlerts(false);
     }, 5000);
 
-    // Cleanup
     return () => {
       clearInterval(interval);
       document.removeEventListener('click', initAudio);
@@ -46,13 +42,11 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
   }, []);
 
 
-
   const fetchAlerts = async (isInitialLoad = false) => {
     try {
       const response = await fetch('/api/alerts');
       const data = await response.json();
 
-      // On initial load, just mark all as seen without notifying
       if (isInitialLoad || seenAlertIds.size === 0) {
         const initialSeenIds = new Set(data.map((a: Alert) => a.id));
         setSeenAlertIds(initialSeenIds);
@@ -63,7 +57,6 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
         return;
       }
 
-      // Find truly new alerts (not seen before)
       const newAlerts = data.filter((alert: Alert) => !seenAlertIds.has(alert.id));
 
       console.log('Checking for new alerts:', {
@@ -73,19 +66,17 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
         newAlertIds: newAlerts.map(a => a.id)
       });
 
-      // Only notify for new unread alerts
       if (newAlerts.length > 0) {
         const newUnreadAlerts = newAlerts.filter((a: Alert) => !a.is_read);
         console.log('New unread alerts:', newUnreadAlerts.length);
 
         if (newUnreadAlerts.length > 0) {
-          // Show notification only for the newest alert
+
           console.log('Showing notification for:', newUnreadAlerts[0].title);
           showNewAlertNotification(newUnreadAlerts[0]);
         }
       }
 
-      // Update seen alert IDs
       const newSeenIds = new Set(data.map((a: Alert) => a.id));
       setSeenAlertIds(newSeenIds);
 
@@ -100,13 +91,11 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
   const showNewAlertNotification = (alert: Alert) => {
     console.log('New alert detected:', alert.title);
 
-    // Play sound
     playNotificationSound();
 
-    // Vibrate on mobile devices
     if ('vibrate' in navigator) {
       try {
-        // Vibration pattern: vibrate 200ms, pause 100ms, vibrate 200ms
+
         navigator.vibrate([200, 100, 200]);
         console.log('Vibration triggered');
       } catch (e) {
@@ -122,12 +111,11 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
     }
 
     try {
-      // Resume audio context if suspended (mobile requirement)
+
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
 
-      // Use Web Audio API to generate beep sound (works best on mobile)
       playBeepSound(audioContext);
       console.log('Sound played');
     } catch (e) {
@@ -137,7 +125,7 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
 
   const playBeepSound = (ctx: AudioContext) => {
     try {
-      // Generate a beep sound using Web Audio API (works on most mobile devices)
+
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
@@ -227,7 +215,6 @@ export default function AlertPanel({ onUnreadChange }: { onUnreadChange: (count:
           )}
         </div>
       </div>
-
 
 
       <div className="space-y-3 max-h-96 overflow-y-auto">

@@ -20,19 +20,16 @@ class UserAchievement extends Model
         'earned_at' => 'datetime',
     ];
 
-    // The user who earned the achievement
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // The badge that was earned
     public function badge(): BelongsTo
     {
         return $this->belongsTo(Badge::class);
     }
 
-    // The team context for the achievement
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
