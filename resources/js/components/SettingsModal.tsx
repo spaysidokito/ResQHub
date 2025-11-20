@@ -38,10 +38,6 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
   }, []);
 
   useEffect(() => {
-    setLocationSearch(preferences.location_name);
-  }, [preferences.location_name]);
-
-  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest('.location-autocomplete')) {
@@ -59,6 +55,7 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
       const data = await response.json();
       if (data) {
         setPreferences(data);
+        setLocationSearch(data.location_name || '');
       }
     } catch (error) {
       console.error('Error fetching preferences:', error);
@@ -225,7 +222,7 @@ export default function SettingsModal({ onClose, onSave }: { onClose: () => void
                 <label className="block text-sm text-gray-400 mb-2">Search Location</label>
                 <input
                   type="text"
-                  value={locationSearch || preferences.location_name}
+                  value={locationSearch}
                   onChange={(e) => {
                     setLocationSearch(e.target.value);
                     searchLocation(e.target.value);
